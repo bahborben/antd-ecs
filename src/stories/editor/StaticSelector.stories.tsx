@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.compact.css';
 
 import StaticSelector, { IStaticSelectorProps } from '../../comp/editor/selector/StaticSelector';
-import { Entity } from 'comp/model';
+import { Entity } from '../../comp/model';
 import {Button} from 'antd';
 
 export default {
