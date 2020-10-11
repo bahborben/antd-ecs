@@ -6,9 +6,15 @@ import { RefId } from './interface';
 const {Option} = Select;
 
 export interface IStaticSelectorProps<E extends Entity, ID extends RefId> {
-  readonly data: E[],
+  /**
+   * 选项数据
+   */
+  readonly data: E[],  
+  /* 当前选项值 */
   value?: ID,
+  /* 默认选项值 */
   defaultValue?: ID,
+  /* 数据对象值对应的属性名称 */
   idField: string,
   optionRender: (record: E) => ReactNode,
   allowClear?: boolean,

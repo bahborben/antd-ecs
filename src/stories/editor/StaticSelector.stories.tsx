@@ -10,9 +10,6 @@ import {Button} from 'antd';
 export default {
   title: 'Antd-ECS/Selector/StaticSelector',
   component: StaticSelector,
-  argTypes: {
-    backgroundColor: { control: 'color' },
-  },
 } as Meta;
 
 declare type Role = Entity;
@@ -35,6 +32,7 @@ Primary.args = {
 
 let selectedValue: string = "10001";
 export const Second = Template.bind({});
+Second.parameters = {docs: {page: null}}
 Second.args = {
   data: roles,
   idField: "code",
@@ -60,3 +58,10 @@ Third.args = {
   style: {width: "300px"},
   value: "10001"
 };
+
+export const Fourth: React.FC<{}> = () => (<StaticSelector<Role, string> 
+  data={roles}
+  idField="code"
+  optionRender={(record) => record["name"] as string}
+  style={{width: "300px"}}
+/>);
