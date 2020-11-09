@@ -6,8 +6,6 @@ import { EditorType } from 'comp/editor/editors';
 import { Store } from 'antd/lib/form/interface';
 import {ValidateMessages} from 'rc-field-form/lib/interface'
 
-import './BaseForm.css'
-
 export interface IBaseFormItemProps {
   key: string,
   label: string,

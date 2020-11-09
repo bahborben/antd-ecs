@@ -78,7 +78,6 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
           : <Radio checked={isSelected} onClick={e => this._toggleRowSelection(record)}/>
       }
     };
-    console.debug(rowSelection, this.state.selectedKeys);
 
     return (
       <Table<E>

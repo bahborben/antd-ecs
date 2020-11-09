@@ -86,7 +86,6 @@ export default class EditableTable<E extends Entity> extends React.Component<IEd
   /** 编辑单行 */
   private _editRow(record: E) {
     this._formRef.current?.setFieldsValue({ ...record });
-    console.debug("edit record:", record);
     this.setState({
       editingKey: getRowKey(record, this.props.keyField)
     });

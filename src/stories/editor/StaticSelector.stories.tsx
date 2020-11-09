@@ -1,14 +1,12 @@
 import React from 'react';
-// also exported from '@storybook/react' if you can deal with breaking changes in 6.1
 import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.compact.css';
 
 import StaticSelector, { IStaticSelectorProps } from '../../comp/editor/selector/StaticSelector';
 import { Entity } from '../../comp/model';
-import {Button} from 'antd';
 
 export default {
-  title: 'Antd-ECS/Selector/StaticSelector',
+  title: 'Antd-ECS/Selector/Static Selector',
   component: StaticSelector,
 } as Meta;
 
@@ -22,46 +20,20 @@ const roles: Role[] = [
 
 const Template: Story<IStaticSelectorProps<Role, string>> = (args) => <StaticSelector<Role, string> {...args} />;
 
-export const Primary = Template.bind({});
-Primary.args = {
+export const Basic = Template.bind({});
+Basic.args = {
   data: roles,
   idField: "code",
   optionRender: (record) => record["name"] as string,
   style: {width: "300px"}
 };
 
+export const withDefaultValue = Template.bind({});
 let selectedValue: string = "10001";
-export const Second = Template.bind({});
-Second.parameters = {docs: {page: null}}
-Second.args = {
+withDefaultValue.args = {
   data: roles,
   idField: "code",
   optionRender: (record) => record["name"] as string,
   style: {width: "300px"},
   defaultValue: selectedValue
 };
-
-
-let requestValue: string | undefined = undefined;
-const Template3: Story<IStaticSelectorProps<Role, string>> = (args) => (
-<React.Fragment>
-  <Button onClick={e => requestValue = "10001"}>Wizard</Button>
-  <Button onClick={e => requestValue = "10002"}>Barbarian</Button>
-  <StaticSelector<Role, string> {...args} />
-</React.Fragment>
-);
-export const Third = Template3.bind({});
-Third.args = {
-  data: roles,
-  idField: "code",
-  optionRender: (record) => record["name"] as string,
-  style: {width: "300px"},
-  value: "10001"
-};
-
-export const Fourth: React.FC<{}> = () => (<StaticSelector<Role, string> 
-  data={roles}
-  idField="code"
-  optionRender={(record) => record["name"] as string}
-  style={{width: "300px"}}
-/>);
