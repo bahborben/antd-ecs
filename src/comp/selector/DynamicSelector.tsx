@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Select } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { RefDataProvider, RefId, IRefQueryCondition } from './interface';
 
 const {Option} = Select;
@@ -98,7 +98,7 @@ export default class DynamicSelector<E extends Entity, ID extends RefId> extends
         style={{width:200}} >
         {
           data.map(d => (
-            <Option key={d[idField]} value={d[idField] || ""}>
+            <Option key={d[idField] as string} value={(d[idField] || "") as string}>
               {optionRender(d)}
             </Option>
           ))

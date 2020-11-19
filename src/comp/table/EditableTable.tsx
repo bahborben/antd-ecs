@@ -2,11 +2,11 @@ import React, { RefObject } from 'react';
 import { Form, Button, Row, Col, Modal } from 'antd';
 import { ColumnType, ColumnsType } from 'antd/lib/table/interface';
 import { SaveOutlined, EditOutlined, DeleteOutlined, UndoOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { getRowKey } from './util';
 import BaseTable, { IBaseTableProps } from './BaseTable';
 import { FormInstance } from 'antd/lib/form';
-import { EditorType } from 'comp/editor/editors';
+import { EditorType } from '../editor/editors';
 
 /** 单元格编辑组件配置 */
 interface ITableCellEditorProps<R extends Entity> extends React.HTMLAttributes<HTMLElement> {

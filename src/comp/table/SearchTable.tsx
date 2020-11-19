@@ -2,24 +2,21 @@ import React, { createRef, RefObject } from 'react';
 
 import { ColumnsType } from 'antd/lib/table/interface';
 
-import BaseTable from 'comp/table/BaseTable'
-import { Entity } from 'comp/model';
+import BaseTable from '../table/BaseTable'
+import { Entity } from '../model';
 import { Input } from 'antd';
-import { RefDataProvider, RefId } from '../editor/selector/interface';
-import Modal from 'antd/lib/modal/Modal';
+import { RefDataProvider, RefId } from '../selector/interface';
+import Modal, { ModalProps } from 'antd/lib/modal/Modal';
 
 const {Search} = Input;
 
-export interface ISearchTableProps<E extends Entity, ID extends RefId> {
+export interface ISearchTableProps<E extends Entity, ID extends RefId> extends Omit<ModalProps, "onOk"|"title"> {
   keyword?: string,
   onLoadData: RefDataProvider<E, ID>,
   columns: ColumnsType<E>,
   keyField: keyof E,
-  isMultiSelect?: boolean,
+  multiSelect?: boolean,
   onOk?: (records: E[]) => void,
-  onCancel?: () => void,
-  visible: boolean,
-  width?: number,
   onSelect?: (selected: E[]) => void,
 }
 
@@ -43,7 +40,6 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
     this._handleKeywordChange = this._handleKeywordChange.bind(this);
     this._handleSelect = this._handleSelect.bind(this);
     this._handleOk = this._handleOk.bind(this);
-    this._handleCancel = this._handleCancel.bind(this);
   }
 
   private refSearchInput: RefObject<Input> = createRef<Input>();
@@ -81,14 +77,11 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
       this.props.onOk(this.state.selected);
   }
 
-  private _handleCancel(event: React.MouseEvent<HTMLElement, MouseEvent>): void {
-    if(this.props.onCancel)
-      this.props.onCancel();
-  }
-
   render(){
     return (
+      
       <Modal
+        {...this.props}
         title={
           <Search
             ref={this.refSearchInput}
@@ -100,17 +93,13 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
           >
           </Search>
         }
-        visible={this.props.visible}
         onOk={this._handleOk}
-        onCancel={this._handleCancel}
-        destroyOnClose={true}
-        width={this.props.width || 800}
       >
         <BaseTable<E>
           columns={this.props.columns}
           data={this.state.data}
           keyField={this.props.keyField}
-          isMultiSelect={this.props.isMultiSelect}
+          multiSelect={this.props.multiSelect}
           onRowSelected={this._handleSelect}
         />
       </Modal>

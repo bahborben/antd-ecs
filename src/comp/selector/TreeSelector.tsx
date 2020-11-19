@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import { TreeSelect } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { RefId } from './interface';
 
-import { ITreeNode, composeTree } from '../../tree/util';
+import { ITreeNode, composeTree } from '../tree/util';
 
 const {TreeNode} = TreeSelect;
 
@@ -53,7 +53,7 @@ export default class TreeSelector<E extends Entity, ID extends RefId> extends Re
     return nodes.map(n => {
       return (
         <TreeNode
-          key={n.entity[idField]}
+          key={n.entity[idField] as string}
           value={n.entity[idField] as RefId}
           title={title ? title(n.entity) : n.entity[idField]}
         >

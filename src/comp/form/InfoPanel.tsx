@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Descriptions } from 'antd';
-import { Entity } from 'comp/model';
+import { DescriptionsProps } from 'antd/lib/descriptions';
+import { Entity, Value } from '../model';
 
 export interface IInfoPanelItem<E extends Entity> {
   label: string,
   dataIndex: keyof E,
-  span?: number
+  span?: number,
+  render?: (value: Value) => ReactNode
 }
 
-export interface IInfoPanelProp<E extends Entity> {
+export interface IInfoPanelProp<E extends Entity> extends DescriptionsProps {
   data: E,
-  title: string,
-  column?: number,
   items: IInfoPanelItem<E>[]
 }
 
@@ -24,18 +24,17 @@ export default class InfoPanel<E extends Entity> extends React.Component<IInfoPa
 
   private _createDescriptionItems(data: E, items: IInfoPanelItem<E>[]) {
     return items.map(x => (
-      <Descriptions.Item label={x.label}>{data[x.dataIndex]}</Descriptions.Item>
+      <Descriptions.Item label={x.label}>
+        {x.render ? x.render(data[x.dataIndex]) : data[x.dataIndex]}
+      </Descriptions.Item>
     ));
   }
 
   render() {
-    const {data, title, column, items} = this.props;
+    const {data, items} = this.props;
     return (
       <Descriptions
-        title={title}
-        column={column ? column : 3}
-        bordered={true}
-        size="middle"
+        {...this.props}
       >
         {this._createDescriptionItems(data, items)}
       </Descriptions>

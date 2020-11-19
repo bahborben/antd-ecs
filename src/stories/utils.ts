@@ -1,4 +1,4 @@
-import { RefDataProvider } from "../comp/editor/selector/interface";
+import { RefDataProvider } from "../comp/selector/interface";
 import { Entity } from "../comp/model";
 
 const demoBookData: Entity[] = [

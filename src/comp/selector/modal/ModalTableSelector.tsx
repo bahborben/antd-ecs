@@ -1,8 +1,8 @@
 import React from 'react';
 import { Input } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../../model';
 import { IRefQueryCondition, RefId } from '../interface';
-import SearchTable, { ISearchTableProps } from '../../../table/SearchTable';
+import SearchTable, { ISearchTableProps } from '../../table/SearchTable';
 
 const {Search} = Input;
 
@@ -82,7 +82,7 @@ export default class ModalTableSelector<E extends Entity, ID extends RefId> exte
           onLoadData={this.props.onLoadData}
           columns={this.props.columns}
           keyField={this.props.keyField}
-          isMultiSelect={false}
+          multiSelect={false}
           onOk={(records: E[]) => {this.setState({selectedData: records && records.length > 0 ? records[0]: undefined})}}
           onCancel={() => {this.setState({showTable: false})}}
           visible={this.state.showTable}

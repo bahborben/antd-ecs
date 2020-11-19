@@ -2,7 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.compact.css';
 
-import StaticSelector, { IStaticSelectorProps } from '../../comp/editor/selector/StaticSelector';
+import StaticSelector, { IStaticSelectorProps } from '../../comp/selector/StaticSelector';
 import { Entity } from '../../comp/model';
 
 export default {

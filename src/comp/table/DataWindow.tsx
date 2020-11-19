@@ -1,10 +1,9 @@
 import React, { ReactElement } from 'react';
-import { Data, Entity } from 'comp/model';
+import { Data, Entity, PageInfo } from '../model';
 import { Row, Col, Pagination, Space } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
 import { IEditableTableProps } from './EditableTable';
 import { IBaseTableProps } from './BaseTable';
-import { PageInfo } from 'comp/model';
 import BaseForm, { IBaseFormProps } from '../form/BaseForm';
 import { PaginationProps } from 'antd/lib/pagination';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.css';
 
-import TreeSelector, { ITreeSelectorProps } from '../../comp/editor/selector/TreeSelector';
+import TreeSelector, { ITreeSelectorProps } from '../../comp/selector/TreeSelector';
 import { Entity } from '../../comp/model';
 
 export default {

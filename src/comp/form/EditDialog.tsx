@@ -1,6 +1,6 @@
 import React, { ReactNode, RefObject } from 'react';
 import { Form, Modal } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { FormInstance } from 'antd/lib/form';
 import { IBaseFormProps, getLayout } from './BaseForm';
 
@@ -43,9 +43,9 @@ export default class EditDialog<E extends Entity> extends React.Component<IEditD
   render(){
     let {
       visible, title, okTitle, cancelTitle, 
-      data, fields, cols, validateMessages
+      data, items, cols, validateMessages
     } = this.props
-    let rows: ReactNode[] = getLayout(fields, cols);
+    let rows: ReactNode[] = getLayout(items, cols);
     return(
       <Modal
         visible={visible}

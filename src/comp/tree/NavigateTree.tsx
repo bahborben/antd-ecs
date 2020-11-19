@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Button, Input, Space,Row, Divider } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import {PlusSquareOutlined, MinusSquareOutlined, FormOutlined} from '@ant-design/icons';
 import BaseTree, { IBaseTreeProps } from './BaseTree';
 

@@ -1,6 +1,6 @@
 import React, { ReactText } from 'react';
 import { Tree } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { composeTree, ITreeNode } from './util';
 
 export interface IBaseTreeProps<E extends Entity> {

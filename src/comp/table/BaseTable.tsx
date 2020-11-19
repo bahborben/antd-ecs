@@ -3,15 +3,17 @@ import { Checkbox, Radio, Table } from 'antd';
 import { TableRowSelection, ColumnsType } from 'antd/lib/table/interface';
 import {TableComponents} from 'rc-table/lib/interface'
 
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { getRowKey } from './util';
+
+export declare type IBaseTableColumns<E extends Entity> = ColumnsType<E>;
 
 export interface IBaseTableProps<E extends Entity> {
   components?: TableComponents<E>,
   columns: ColumnsType<E>,
   data: E[],
   keyField: keyof E,
-  isMultiSelect?: boolean,
+  multiSelect?: boolean,
   onPageChange?: (page: number, pageSize: number) => void;
   onRowSelected?: (records: E[], keys: React.Key[]) => void,
   onRowFocused?: (record: E, key: React.Key) => void,
@@ -41,8 +43,13 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
     let key: string = rec ? rec[this.props.keyField] as string : "";
     if(selectedKeys.includes(key))
       selectedKeys.splice(selectedKeys.indexOf(key), 1);
-    else
-      selectedKeys.push(key);
+    else {
+      if(!this.props.multiSelect) {
+        // when single select, change to latest selection
+        selectedKeys = [key]
+      } else
+        selectedKeys.push(key);
+    }
     let rows: E[] = this.props.data.filter((data) => selectedKeys.includes(data ? data[this.props.keyField] as string : ""));
     if(this.props.onRowSelected)
       this.props.onRowSelected(rows, selectedKeys);
@@ -53,9 +60,9 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
     return {
       onClick: (event) => {
         if(index !== undefined){
-          if(event.ctrlKey){
+          if((this.props.multiSelect && event.ctrlKey) || !this.props.multiSelect){
             this._toggleRowSelection(data);
-          }
+          } 
         }
       }
     }
@@ -63,17 +70,23 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
 
   render(){
     const rowSelection: TableRowSelection<E> = {
-      type: (this.props.isMultiSelect) ? "checkbox" : "radio",
+      type: (this.props.multiSelect) ? "checkbox" : "radio",
       onChange: (keys, rows) => {
+        let sks: React.Key[] = keys;
+        if(!this.props.multiSelect){
+          // single select remains only one element
+          let sk: React.Key | undefined = keys.find(x => !this.state.selectedKeys.includes(x as string));
+          sks = sk ? [sk] : [];
+        }
         if(this.props.onRowSelected)
-          this.props.onRowSelected(rows, keys);
-        this.setState({selectedKeys: keys as string[]});
+          this.props.onRowSelected(rows, sks);
+        this.setState({selectedKeys: sks as string[]});
       },
       selectedRowKeys: this.state.selectedKeys,
       renderCell: (value, record, index, originNode) => {
         let rk: string | undefined = getRowKey(record, this.props.keyField)
         let isSelected: boolean = (rk != undefined && this.state.selectedKeys.includes(rk));
-        return this.props.isMultiSelect ?
+        return this.props.multiSelect ?
           <Checkbox checked={isSelected} onClick={e => this._toggleRowSelection(record)}/>
           : <Radio checked={isSelected} onClick={e => this._toggleRowSelection(record)}/>
       }

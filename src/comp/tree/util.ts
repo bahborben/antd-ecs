@@ -1,6 +1,6 @@
 import { Key } from 'react';
 import {DataNode} from 'rc-tree/lib/interface';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 
 export interface ITreeNode<E extends Entity> extends DataNode {
   entity: E,
@@ -31,8 +31,8 @@ export function composeTree<E extends Entity>(
   let nodeMap = new Map<Key, ITreeNode<E>>();
   objects.forEach(o => {
     let node: ITreeNode<E> = {
-      key: o[keyField] || "",
-      parent: o[parentField],
+      key: (o[keyField] || "") as string,
+      parent: o[parentField] as string,
       title: title(o),
       entity: o,
       children: []

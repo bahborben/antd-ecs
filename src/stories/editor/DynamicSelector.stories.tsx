@@ -2,9 +2,9 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.compact.css';
 
-import DynamicSelector, { IDynamicSelectorProps } from '../../comp/editor/selector/DynamicSelector';
+import DynamicSelector, { IDynamicSelectorProps } from '../../comp/selector/DynamicSelector';
 import { Entity } from '../../comp/model';
-import { RefDataProvider } from '../../comp/editor/selector/interface';
+import { RefDataProvider } from '../../comp/selector/interface';
 
 export default {
   title: 'Antd-ECS/Selector/Dynamic Selector',

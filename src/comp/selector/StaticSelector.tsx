@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Select } from 'antd';
-import { Entity } from 'comp/model';
+import { Entity } from '../model';
 import { RefId } from './interface';
 
 const {Option} = Select;
@@ -53,7 +53,7 @@ export default class StaticSelector<E extends Entity, ID extends RefId> extends 
         style={style}
       >
         {data.map(d => (
-          <Option key={d[idField]} value={d[idField] || ""}>
+          <Option key={d[idField] as string} value={(d[idField] || "") as string}>
             {optionRender(d)}
           </Option>
         ))}

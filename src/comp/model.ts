@@ -1,11 +1,13 @@
-import { Key } from 'react';
+import { Moment } from 'moment';
+
+export declare type Value = string | number | boolean | Moment | Date | undefined;
 
 export interface Entity {
-  [key: string]: Key | undefined
+  [key: string]: Value
 }
 
 export interface Data {
-  [key: string]: Key | Key[] | undefined
+  [key: string]: Value | Value[] | undefined
 }
 
 export interface PageInfo {
