@@ -8,7 +8,8 @@ import BaseForm, { IBaseFormProps } from '../form/BaseForm';
 import { PaginationProps } from 'antd/lib/pagination';
 
 export interface IDataWindowPagination extends PageInfo {
-  onPageChange: (page: number, pageSize?: number) => void
+  onPageChange: (page: number, pageSize?: number) => void,
+  defaultPageSize?: number
 }
 
 export interface IDataWindowProp<E extends Entity, QC extends Data>{
@@ -62,7 +63,7 @@ export default class DataWindow<E extends Entity, QC extends Data> extends React
       pageSize={this.props.page?.pageSize}
       total={this.props.page?.total}
       defaultCurrent={1}
-      defaultPageSize={10}
+      defaultPageSize={this.props.page?.defaultPageSize || 20}
       size="small"
       onChange={this.props.page?.onPageChange}
       onShowSizeChange={this.props.page?.onPageChange}
