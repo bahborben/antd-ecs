@@ -2,17 +2,15 @@ import React, { ReactNode } from 'react';
 import { Select } from 'antd';
 import { Entity } from '../model';
 import { RefDataProvider, RefId, IRefQueryCondition } from './interface';
+import { SelectProps } from 'antd/lib/select';
 
 const {Option} = Select;
 
-export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> {
+export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID>, 'onChange'> {
   onLoadData: RefDataProvider<E, ID>,
   value?: ID,
-  defaultValue?: ID,
   idField: string,
   optionRender: (record: E) => ReactNode,
-  allowClear?: boolean,
-  placeholder?: string,
   onChange?: (value: ID, record?: E) => void
 }
 
@@ -82,20 +80,18 @@ export default class DynamicSelector<E extends Entity, ID extends RefId> extends
   }
 
   render(){
-    let {idField, optionRender, allowClear, placeholder, defaultValue} = this.props;
+    let {idField, optionRender} = this.props;
     let {data} = this.state;
     return (
       <Select
+        {...this.props}
         showSearch
         showArrow={true}
-        defaultValue={defaultValue}
         value={this._getCurrentValue()}
         onChange={this._handleChange}
         onSearch={this._handleSearch}
-        allowClear={allowClear}
-        placeholder={placeholder}
         filterOption={false}
-        style={{width:200}} >
+      >
         {
           data.map(d => (
             <Option key={d[idField] as string} value={(d[idField] || "") as string}>
