@@ -3,27 +3,31 @@ import React, { createRef, RefObject } from 'react';
 import { ColumnsType } from 'antd/lib/table/interface';
 
 import BaseTable from '../table/BaseTable'
-import { Entity } from '../model';
-import { Input } from 'antd';
-import { RefDataProvider, RefId } from '../selector/interface';
+import { Entity, PageInfo } from '../model';
+import { Input, Collapse } from 'antd';
+import { PageableRefDataProvider, RefDataProvider, RefId } from '../selector/interface';
 import Modal, { ModalProps } from 'antd/lib/modal/Modal';
+import DataWindow from './DataWindow';
 
 const {Search} = Input;
 
 export interface ISearchTableProps<E extends Entity, ID extends RefId> extends Omit<ModalProps, "onOk"|"title"> {
   keyword?: string,
-  onLoadData: RefDataProvider<E, ID>,
+  onLoadData: PageableRefDataProvider<E, ID>,
   columns: ColumnsType<E>,
   keyField: keyof E,
   multiSelect?: boolean,
   onOk?: (records: E[]) => void,
   onSelect?: (selected: E[]) => void,
+  selectedRender: (item: E) => string,
+  pageSize?: number
 }
 
 interface ISearchTableState<E extends Entity> {
   keyword?: string,
   data: E[],
   selected: E[],
+  pageInfo: PageInfo,
 }
 
 export default class SearchTable<E extends Entity, ID extends RefId> extends React.Component<ISearchTableProps<E, ID>, ISearchTableState<E>> {
@@ -34,12 +38,14 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
       keyword: this.props.keyword,
       data: [],
       selected: [],
+      pageInfo: {current: 0, pageSize: this.props.pageSize || 25, total: 0}
     }
 
     this._handleSearch = this._handleSearch.bind(this);
     this._handleKeywordChange = this._handleKeywordChange.bind(this);
     this._handleSelect = this._handleSelect.bind(this);
     this._handleOk = this._handleOk.bind(this);
+    this._doSearch = this._doSearch.bind(this);
   }
 
   private refSearchInput: RefObject<Input> = createRef<Input>();
@@ -55,11 +61,15 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
     }
   }
 
-  private _handleSearch(keyword: string | undefined): void {
+  private _doSearch(keyword: string, pi: PageInfo): void {
     (async () => {
-      let data:E[] = await this.props.onLoadData({keyword});
-      this.setState({data});      
-    })();
+      let [data, pageInfo] = await this.props.onLoadData({keyword}, pi);
+      this.setState({data, pageInfo});
+  })();
+  }
+
+  private _handleSearch(keyword?: string): void {
+    this._doSearch(keyword || '', this.state.pageInfo);
   }
 
   private _handleKeywordChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -78,15 +88,25 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
   }
 
   render(){
-    return (
-      
+    const dataTable = <BaseTable<E>
+      columns={this.props.columns}
+      data={this.state.data}
+      keyField={this.props.keyField}
+      multiSelect={this.props.multiSelect}
+      onRowSelected={this._handleSelect}
+    />;
+    const dataPagination = this.props.pageSize ? {
+      onPageChange: (page: number, pageSize?: number) => {this._handleSearch(this.state.keyword)},
+      defaultPageSize: this.props.pageSize
+    } : undefined;
+    return (      
       <Modal
         {...this.props}
         title={
           <Search
             ref={this.refSearchInput}
             addonBefore="关键字:"
-            onSearch={this._handleSearch}
+            onSearch={(keyword) => {this._doSearch(keyword || '', this.state.pageInfo);}}
             value={this.state.keyword || this.props.keyword}
             onChange={this._handleKeywordChange}
             style={{paddingRight: 100}}
@@ -95,12 +115,19 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
         }
         onOk={this._handleOk}
       >
-        <BaseTable<E>
+        {/* <BaseTable<E>
           columns={this.props.columns}
           data={this.state.data}
           keyField={this.props.keyField}
           multiSelect={this.props.multiSelect}
           onRowSelected={this._handleSelect}
+        /> */}
+        <DataWindow
+          table={dataTable}
+          page={{
+            ...this.state.pageInfo,
+            onPageChange: (current, pageSize) => {this._doSearch(this.state.keyword || '', {current, pageSize});}
+          }}
         />
       </Modal>
     );

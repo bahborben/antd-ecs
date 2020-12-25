@@ -1,4 +1,4 @@
-import { Entity } from "../model";
+import { Entity, PageInfo } from "../model";
 
 // 参照项id类型
 export declare type RefId = string;
@@ -12,6 +12,8 @@ export interface IRefQueryCondition<ID extends RefId> {
 
 // 动态内容参照的数据加载接口
 export declare type RefDataProvider<E extends Entity, ID extends RefId> = (queryCondition: IRefQueryCondition<ID>) => Promise<E[]>;
+// 分页动态内容参照的数据加载接口
+export declare type PageableRefDataProvider<E extends Entity, ID extends RefId> = (queryCondition: IRefQueryCondition<ID>, pageInfo: PageInfo) => Promise<[E[], PageInfo]>;
 
 export * from './StaticSelector';
 export * from './TreeSelector';
