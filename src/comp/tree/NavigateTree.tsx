@@ -31,6 +31,7 @@ export default class NavigateTree<E extends Entity> extends React.Component<INav
     this._createSearchPanel = this._createSearchPanel.bind(this);
     this._handleSearch = this._handleSearch.bind(this);
     this._getParentKey = this._getParentKey.bind(this);
+    this._getAllParentKeys = this._getAllParentKeys.bind(this);
   }
 
   private _createEditPanel(): ReactNode | null {
@@ -79,6 +80,15 @@ export default class NavigateTree<E extends Entity> extends React.Component<INav
     return null;
   }
 
+  /** 获取所有上级节点 */
+  private _getAllParentKeys(keys: string[], container: Set<string>): void {
+    let pks: string[] = this.props.data.filter(x => keys.includes(x[this.props.keyField] as string)).map(x => this._getParentKey(x)).filter(x => x !== "");
+    if(pks.length > 0){
+      pks.forEach(x => container.add(x));
+      this._getAllParentKeys(pks, container);
+    }
+  }
+
   private _getParentKey(entity: E): string {
     let {parentField, virtualRoot} = this.props;
     let parentKey = entity[parentField] as string;  // 二级及以下节点
@@ -94,7 +104,9 @@ export default class NavigateTree<E extends Entity> extends React.Component<INav
         .filter(x => title(x).indexOf(keyword) >= 0)  // 按搜索关键字匹配title
         .map(x => this._getParentKey(x))  // 获取匹配节点的父节点
         .filter(x => x !== ""); // 过滤掉匹配到的一级节点节点(无虚拟根节点时的一级节点)
-      keys = Array.from(new Set(keys)); // 去重
+      let container = new Set(keys);
+      this._getAllParentKeys(keys, container);
+      keys = Array.from(container); // 去重
     }
     this.setState({expandedKeys: keys});
   }

@@ -37,7 +37,7 @@ export default class ModalTableSelector<E extends Entity, ID extends RefId> exte
         let condition: IRefQueryCondition<ID> = {
           refIds: [currValue as ID]
         };
-        let data: E[] = await this.props.onLoadData(condition);
+        let [data, _] = await this.props.onLoadData(condition, {current: 0, pageSize: this.props.pageSize || 25, total: 0});
         if(data && data.length > 0) {
           this.setState({
             selectedData: data[0]
@@ -78,10 +78,8 @@ export default class ModalTableSelector<E extends Entity, ID extends RefId> exte
           onChange={this._handleChange}
         />
         <SearchTable<E, ID>
-          keyword={this.state.keyword}
-          onLoadData={this.props.onLoadData}
-          columns={this.props.columns}
-          keyField={this.props.keyField}
+          {...this.props}
+          keyword={this.state.keyword}          
           multiSelect={false}
           onOk={(records: E[]) => {this.setState({selectedData: records && records.length > 0 ? records[0]: undefined})}}
           onCancel={() => {this.setState({showTable: false})}}

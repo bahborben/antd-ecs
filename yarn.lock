@@ -3353,6 +3353,19 @@ ansi-to-html@^0.6.11:
   dependencies:
     entities "^1.1.2"
 
+antd-ecs@0.2.7:
+  version "0.2.7"
+  resolved "https://registry.npm.taobao.org/antd-ecs/download/antd-ecs-0.2.7.tgz#bf023eb67fcc5e531c183662ef184df6b1c3f80b"
+  integrity sha1-vwI+tn/MXlMcGDZi7xhN9rHD+As=
+  dependencies:
+    "@types/node" "^12.0.0"
+    "@types/react" "^16.9.0"
+    "@types/react-dom" "^16.9.0"
+    antd "^4.6.5"
+    react "^16.13.1"
+    react-dom "^16.13.1"
+    react-scripts "3.4.3"
+
 antd@^4.6.5:
   version "4.6.5"
   resolved "https://registry.npm.taobao.org/antd/download/antd-4.6.5.tgz?cache=0&sync_timestamp=1600580630033&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fantd%2Fdownload%2Fantd-4.6.5.tgz#bfa53125d43ea93f7bea1516a29a1767b76c7329"

@@ -16,17 +16,26 @@ export interface IBaseTreeProps<E extends Entity> {
 }
 
 interface IBaseTreeState {
-  expandedKeys?: string[]
+  expandedKeys: string[]
 }
 
 export default class BaseTree<E extends Entity> extends React.Component<IBaseTreeProps<E>, IBaseTreeState> {
 
   constructor(props: IBaseTreeProps<E>){
     super(props);
-    this.state = {};
+    this.state = {expandedKeys: []};
     this._createTreeNodes = this._createTreeNodes.bind(this);
     this._handleExpand = this._handleExpand.bind(this);
     this._handleSelect = this._handleSelect.bind(this);
+  }
+
+  componentDidUpdate(prevProps: IBaseTreeProps<E>) {
+    let eks = new Set(this.props.expandedKeys);
+    if (new Set(prevProps.expandedKeys).size !== eks.size) {
+      // 如果props指定了展开节点，则增补到当前展开节点中
+      let curr = new Set(this.state.expandedKeys.concat(this.props.expandedKeys || []));
+      this.setState({expandedKeys: Array.from(new Set(curr))});
+    }
   }
 
   private _createTreeNodes(): ITreeNode<E>[]{
@@ -58,16 +67,11 @@ export default class BaseTree<E extends Entity> extends React.Component<IBaseTre
 
   render(){
     let {virtualRoot, expandedKeys, defaultExpandedKeys} = this.props;
-    let eks = (virtualRoot?.key) ? [virtualRoot.key] : [];  // 默认展开一级节点
-    if(expandedKeys && expandedKeys.length > 0){
-      eks = expandedKeys; // 第一优先： from props
-    } else if(this.state.expandedKeys && this.state.expandedKeys.length > 0){
-      eks = this.state.expandedKeys;  // 第二优先： from state
-    };
     return (
       <Tree
-        autoExpandParent
-        expandedKeys={eks}
+        showLine
+        showIcon
+        expandedKeys={this.state.expandedKeys}
         onExpand={this._handleExpand}
         treeData={this._createTreeNodes()}
         defaultExpandedKeys={defaultExpandedKeys ? defaultExpandedKeys : ((virtualRoot) ? [virtualRoot.key] : [])}

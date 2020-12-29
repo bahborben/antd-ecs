@@ -2,10 +2,10 @@ import React, { createRef, RefObject } from 'react';
 
 import { ColumnsType } from 'antd/lib/table/interface';
 
-import BaseTable from '../table/BaseTable'
+import BaseTable from '../table/BaseTable';
 import { Entity, PageInfo } from '../model';
-import { Input, Collapse } from 'antd';
-import { PageableRefDataProvider, RefDataProvider, RefId } from '../selector/interface';
+import { Input } from 'antd';
+import { PageableRefDataProvider, RefId } from '../selector/interface';
 import Modal, { ModalProps } from 'antd/lib/modal/Modal';
 import DataWindow from './DataWindow';
 
@@ -19,8 +19,7 @@ export interface ISearchTableProps<E extends Entity, ID extends RefId> extends O
   multiSelect?: boolean,
   onOk?: (records: E[]) => void,
   onSelect?: (selected: E[]) => void,
-  selectedRender: (item: E) => string,
-  pageSize?: number
+  pageSize?: number,
 }
 
 interface ISearchTableState<E extends Entity> {
