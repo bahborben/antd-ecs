@@ -7,15 +7,17 @@ import { IBaseTableProps } from './BaseTable';
 import BaseForm, { IBaseFormProps } from '../form/BaseForm';
 import { PaginationProps } from 'antd/lib/pagination';
 
-export interface IDataWindowPagination extends PageInfo {
+export interface IDataWindowPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
   onPageChange: (page: number, pageSize?: number) => void,
-  defaultPageSize?: number
 }
 
 export interface IDataWindowProp<E extends Entity, QC extends Data>{
   table: ReactElement<IBaseTableProps<E> | IEditableTableProps<E>>,
   operations?: ReactElement<any>,
-  page?: IDataWindowPagination,
+  page?: {
+    status: PageInfo,
+    conf: IDataWindowPagination
+  },
   filters?: IBaseFormProps<QC>
 }
 
@@ -59,15 +61,12 @@ export default class DataWindow<E extends Entity, QC extends Data> extends React
 
   private _getPagination(): ReactElement<PaginationProps> {
     return <Pagination
-      current={this.props.page?.current}
-      pageSize={this.props.page?.pageSize}
-      total={this.props.page?.total}
-      defaultCurrent={1}
-      defaultPageSize={this.props.page?.defaultPageSize || 20}
-      size="small"
-      onChange={this.props.page?.onPageChange}
-      onShowSizeChange={this.props.page?.onPageChange}
-      style={{marginRight:"8px"}}
+      {...this.props.page?.conf}
+      current={this.props.page?.status.current}
+      pageSize={this.props.page?.status?.pageSize || 20}
+      total={this.props.page?.status?.total || 0}
+      onChange={this.props.page?.conf.onPageChange}
+      onShowSizeChange={this.props.page?.conf.onPageChange}
     />;
   }
 

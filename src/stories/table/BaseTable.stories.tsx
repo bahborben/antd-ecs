@@ -16,6 +16,12 @@ const data: Entity[] = [
   {code: "03921", name: "James", gender: "male", age: "40"},
 ];
 
+const data1: Entity[] = [
+  {code: "111", name: "Henry", gender: "male", age: "35"},
+  {code: "222", name: "Jack", gender: "female", age: "24"},
+  {code: "03921", name: "Bob", gender: "male", age: "40"},
+];
+
 const columns: IBaseTableColumns<Entity> = [
   {title: "code", dataIndex: "code"},
   {title: "name", dataIndex: "name"},

@@ -1,9 +1,9 @@
-import React, { ReactElement } from "react";
-import {Input, Checkbox, InputNumber, Switch, DatePicker} from 'antd';
+import React, { Component, ReactElement } from "react";
+import {Input, Checkbox, InputNumber, Switch, DatePicker, Button} from 'antd';
 import { InputProps } from "antd/lib/input";
 import { TextAreaProps } from 'antd/lib/input/TextArea';
 import { InputNumberProps } from "antd/lib/input-number";
-import { CheckboxProps } from 'antd/lib/checkbox';
+import { CheckboxChangeEvent, CheckboxProps } from 'antd/lib/checkbox';
 import { SwitchProps} from 'antd/lib/switch';
 import { PickerProps } from 'antd/lib/date-picker/generatePicker';
 import { Moment } from 'moment';
@@ -13,12 +13,25 @@ import StaticSelector, { IStaticSelectorProps } from '../selector/StaticSelector
 import DynamicSelector, { IDynamicSelectorProps } from '../selector/DynamicSelector';
 import TreeSelector, { ITreeSelectorProps } from '../selector/TreeSelector';
 import ModalTableSelector, { IModalTableSelectorProps } from '../selector/modal/ModalTableSelector';
+import { ButtonProps } from "antd/lib/button";
 
 export interface EditorType<P> {
   props: P,
   getEditor: () => ReactElement<P>
 }
 
+/********** 按钮 **********/
+export class ETButton implements EditorType<ButtonProps> {
+  props: ButtonProps;
+
+  constructor(props: ButtonProps){
+    this.props = props;
+  }
+
+  getEditor(): ReactElement<ButtonProps>{
+    return <Button {...this.props} />
+  }
+}
 /********** 输入框 **********/
 export class ETInput implements EditorType<InputProps> {
   props: InputProps;

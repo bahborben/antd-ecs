@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { Button, Input, Space,Row, Divider } from 'antd';
+import { Button, Input, Space, Divider } from 'antd';
+import {Row, Column} from 'simple-flexbox';
 import { Entity } from '../model';
 import {PlusSquareOutlined, MinusSquareOutlined, FormOutlined} from '@ant-design/icons';
 import BaseTree, { IBaseTreeProps } from './BaseTree';
@@ -27,54 +28,18 @@ export default class NavigateTree<E extends Entity> extends React.Component<INav
   constructor(props: INavigateTreeProps<E>) {
     super(props);
     this.state = {};
-    this._createEditPanel = this._createEditPanel.bind(this);
     this._createSearchPanel = this._createSearchPanel.bind(this);
     this._handleSearch = this._handleSearch.bind(this);
     this._getParentKey = this._getParentKey.bind(this);
     this._getAllParentKeys = this._getAllParentKeys.bind(this);
   }
 
-  private _createEditPanel(): ReactNode | null {
-    if(this.props.edit){
-      let {onCreate, onDelete, onUpdate} = this.props.edit;
-      return (
-        <>
-        <Row style={{marginBottom: "4px"}}>
-          <Space>
-            <Button key="add" disabled={!onCreate} shape="circle" icon={<PlusSquareOutlined />}
-              onClick={(e) => {
-                if(onCreate)
-                  onCreate();
-              }}
-            />
-            <Button key="update" disabled={!onUpdate} shape="circle" icon={<FormOutlined />}
-              onClick={(e) => {
-                if(onUpdate)
-                  onUpdate();
-              }}
-            />
-            <Button key="delete" disabled={!onDelete} shape="circle" icon={<MinusSquareOutlined />}
-              onClick={(e) => {
-                if(onDelete)
-                  onDelete();
-              }}
-            />
-          </Space>
-        </Row>
-        </>
-      );
-    }
-    return null;
-  }
-
   private _createSearchPanel(): ReactNode | null {
     if(this.props.searchable){
       return (
-        <>
-          <Row style={{marginBottom: "4px"}}>
-            <Input.Search onSearch={this._handleSearch}></Input.Search>
-          </Row>
-        </>
+        <Row flex="0 0 auto">
+          <Input.Search onSearch={this._handleSearch}></Input.Search>
+        </Row>
       );
     }
     return null;
@@ -113,14 +78,15 @@ export default class NavigateTree<E extends Entity> extends React.Component<INav
 
   render(){
     return (
-      <div style={{height:"100%"}}>
-        <Divider orientation="left" plain={true} >{this.props.label}</Divider>
-        {this._createEditPanel()}
+      <Column style={{height:"100%", width:"100%"}}>
         {this._createSearchPanel()}
-        <BaseTree 
-          {...this.props}
-          expandedKeys={this.state.expandedKeys} />
-      </div>
+        <Row flex="1 1 auto">
+          <BaseTree 
+            {...this.props}
+            expandedKeys={this.state.expandedKeys}
+          />
+        </Row>
+      </Column>
     );
   }
 }

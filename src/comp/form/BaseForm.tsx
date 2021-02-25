@@ -4,7 +4,6 @@ import { Data } from '../model';
 import { FormItemProps, FormProps } from 'antd/lib/form';
 import { EditorType } from '../editor/editors';
 import { Store } from 'antd/lib/form/interface';
-import {ValidateMessages} from 'rc-field-form/lib/interface'
 
 export interface IBaseFormItemProps extends FormItemProps {
   key: string,

@@ -8,7 +8,7 @@ const {Search} = Input;
 
 export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> extends Omit<ISearchTableProps<E, ID>, "visible"> {
   value?: string,
-  onChange?: (value: ID) => void,
+  onChange?: (value: ID, record: E) => void,
   valueField: keyof E,
   titleRender: (data: E | undefined) => string,
 }
@@ -64,7 +64,7 @@ export default class ModalTableSelector<E extends Entity, ID extends RefId> exte
         keyword: undefined, // clear keyword in order to render content in Input
       });
       if(this.props.onChange)
-        this.props.onChange((rec[this.props.valueField] || "") as ID);
+        this.props.onChange((rec[this.props.valueField] || "") as ID, rec );
     }
   }
 

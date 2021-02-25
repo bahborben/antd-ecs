@@ -20,7 +20,11 @@ const depts: Entity[] = [
   {id: "03", parentId: "", name: "03"},
 ];
 
-const Template: Story<INavigateTreeProps<Entity>> = (args) => <NavigateTree<Entity> {...args} />;
+const Template: Story<INavigateTreeProps<Entity>> = (args) => 
+  <div style={{width: "300px", height: "100%"}}>
+    <NavigateTree<Entity> {...args} />
+  </div>;
+
 
 export const Basic = Template.bind({});
 Basic.args = {
@@ -28,5 +32,8 @@ Basic.args = {
   keyField: "id",
   parentField: "parentId",
   title: (e) => e.name,
-  searchable: true
+  searchable: true,
+  edit: {
+    onCreate: () => {},
+  }
 };

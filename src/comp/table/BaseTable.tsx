@@ -20,7 +20,8 @@ export interface IBaseTableProps<E extends Entity> {
   scroll?: {
     x?: number | true | string;
     y?: number | string;
-  }
+  },
+  clearSelectionOnDataChange?: boolean,
 }
 
 interface IBaseTableState {
@@ -36,6 +37,25 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
     }
     this._toggleRowSelection = this._toggleRowSelection.bind(this);
     this._onRow = this._onRow.bind(this);
+  }
+
+  componentDidUpdate(prevProps: IBaseTableProps<E>) {
+    if (this.props.data !== prevProps.data) {
+      if(!this.props.clearSelectionOnDataChange){
+        // rearrange selection when data is refreshed
+        let originKeys: string[] = this.state.selectedKeys;
+        let currentKeys: string[] = this.props.data.filter(x => getRowKey(x, this.props.keyField)).map(x => getRowKey(x, this.props.keyField) || "");
+        let intersection: string[] = originKeys.filter(x => currentKeys.includes(x));
+        this.setState({selectedKeys: intersection});
+        if(this.props.onRowSelected){
+          console.debug("cdu select:", this.props.data);
+          let records = this.props.data.filter(x => intersection.includes(getRowKey(x, this.props.keyField) || ""));
+          this.props.onRowSelected(records, intersection);
+        }
+      } else {
+        this.setState({selectedKeys: []});
+      }
+    }
   }
 
   private _toggleRowSelection(rec: E): void {

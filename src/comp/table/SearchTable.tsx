@@ -93,11 +93,9 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
       keyField={this.props.keyField}
       multiSelect={this.props.multiSelect}
       onRowSelected={this._handleSelect}
+      clearSelectionOnDataChange={true}
     />;
-    const dataPagination = this.props.pageSize ? {
-      onPageChange: (page: number, pageSize?: number) => {this._handleSearch(this.state.keyword)},
-      defaultPageSize: this.props.pageSize
-    } : undefined;
+    
     return (      
       <Modal
         {...this.props}
@@ -106,7 +104,7 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
             ref={this.refSearchInput}
             addonBefore="关键字:"
             onSearch={(keyword) => {this._doSearch(keyword || '', this.state.pageInfo);}}
-            value={this.state.keyword || this.props.keyword}
+            value={this.state.keyword || ""}
             onChange={this._handleKeywordChange}
             style={{paddingRight: 100}}
           >
@@ -114,18 +112,14 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
         }
         onOk={this._handleOk}
       >
-        {/* <BaseTable<E>
-          columns={this.props.columns}
-          data={this.state.data}
-          keyField={this.props.keyField}
-          multiSelect={this.props.multiSelect}
-          onRowSelected={this._handleSelect}
-        /> */}
         <DataWindow
           table={dataTable}
           page={{
-            ...this.state.pageInfo,
-            onPageChange: (current, pageSize) => {this._doSearch(this.state.keyword || '', {current, pageSize});}
+            status: this.state.pageInfo,
+            conf: {
+              onPageChange: (current, pageSize) => {this._doSearch(this.state.keyword || '', {current, pageSize});},
+              defaultPageSize: this.props.pageSize || 25
+            }
           }}
         />
       </Modal>
