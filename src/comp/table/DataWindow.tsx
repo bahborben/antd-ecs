@@ -25,6 +25,9 @@ interface IDataWindowState {
   showFilterForm: boolean
 }
 
+/**
+ * @deprecated since version 0.3.1, divide into ControlPanel and Table(any type)
+ */
 export default class DataWindow<E extends Entity, QC extends Data> extends React.Component<IDataWindowProp<E, QC>, IDataWindowState> {
 
   constructor(props: IDataWindowProp<E, QC>) {
