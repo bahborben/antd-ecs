@@ -17,12 +17,7 @@ export interface IControlPanelProp<QC extends Data>{
     status: PageInfo,
     conf: IPagination
   },
-  filter?: {
-    form: IBaseFormProps<QC>,
-    expandIcon?: HTMLSpanElement,
-    collapseIcon?: HTMLSpanElement
-  }
-  // filters?: IBaseFormProps<QC>
+  filters?: IBaseFormProps<QC>
 }
 
 interface IControlPanelState {
@@ -43,18 +38,18 @@ export default class ControlPanel<QC extends Data> extends React.Component<ICont
 
   private _handleSearch(condition: QC) {
     this.setState({showFilterForm: false});
-    let onQuerySubmit = this.props.filter?.form.onSubmit;
+    let onQuerySubmit = this.props.filters?.onSubmit;
     if(onQuerySubmit)
       onQuerySubmit(condition);
   }
 
   private _createFilterForm() {
-    if(this.state.showFilterForm && this.props.filter?.form) {
+    if(this.state.showFilterForm && this.props.filters) {
       return (
         <Row flex="0 0 auto">
           <Card>
             <BaseForm<QC>
-              {...this.props.filter?.form}
+              {...this.props.filters}
               onSubmit={this._handleSearch}
             />
           </Card>
@@ -80,7 +75,7 @@ export default class ControlPanel<QC extends Data> extends React.Component<ICont
       <Column flex="1 1 auto" alignContent="space-around">
         <Row flex="0 0 auto">
           {
-            this.props.filter?.form ? (
+            this.props.filters ? (
               <Column flex="0 0 45px" vertical="center" horizontal="center">
                 {this.state.showFilterForm ? 
                   <UpCircleOutlined style={{fontSize: 18}} onClick={e => this.setState({showFilterForm: false})} />
