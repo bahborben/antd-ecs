@@ -1,10 +1,11 @@
 import React, { ReactElement } from 'react';
 import { Row, Column } from 'simple-flexbox';
 import { Data, PageInfo } from 'antd-ecs/model';
-import { Pagination } from 'antd';
+import { Card, Pagination } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
 import BaseForm, { IBaseFormProps } from 'antd-ecs/form/BaseForm';
 import { PaginationProps } from 'antd/lib/pagination';
+
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
   onPageChange: (page: number, pageSize?: number) => void,
@@ -16,7 +17,12 @@ export interface IControlPanelProp<QC extends Data>{
     status: PageInfo,
     conf: IPagination
   },
-  filters?: IBaseFormProps<QC>
+  filter?: {
+    form: IBaseFormProps<QC>,
+    expandIcon?: HTMLSpanElement,
+    collapseIcon?: HTMLSpanElement
+  }
+  // filters?: IBaseFormProps<QC>
 }
 
 interface IControlPanelState {
@@ -37,19 +43,21 @@ export default class ControlPanel<QC extends Data> extends React.Component<ICont
 
   private _handleSearch(condition: QC) {
     this.setState({showFilterForm: false});
-    let onQuerySubmit = this.props.filters?.onSubmit;
+    let onQuerySubmit = this.props.filter?.form.onSubmit;
     if(onQuerySubmit)
       onQuerySubmit(condition);
   }
 
   private _createFilterForm() {
-    if(this.state.showFilterForm && this.props.filters) {
+    if(this.state.showFilterForm && this.props.filter?.form) {
       return (
         <Row flex="0 0 auto">
-          <BaseForm<QC>
-            {...this.props.filters}
-            onSubmit={this._handleSearch}
-          />
+          <Card>
+            <BaseForm<QC>
+              {...this.props.filter?.form}
+              onSubmit={this._handleSearch}
+            />
+          </Card>
         </Row>
       );
     }
@@ -69,10 +77,10 @@ export default class ControlPanel<QC extends Data> extends React.Component<ICont
 
   render(){
     return (
-      <Column alignContent="space-around">
+      <Column flex="1 1 auto" alignContent="space-around">
         <Row flex="0 0 auto">
           {
-            this.props.filters ? (
+            this.props.filter?.form ? (
               <Column flex="0 0 45px" vertical="center" horizontal="center">
                 {this.state.showFilterForm ? 
                   <UpCircleOutlined style={{fontSize: 18}} onClick={e => this.setState({showFilterForm: false})} />

@@ -120,7 +120,7 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
         components={this.props.components}
         columns={this.props.columns}
         dataSource={this.props.data}
-        rowKey={(record, index) => record ? record[this.props.keyField] as string : ""}
+        rowKey={(record) => record ? record[this.props.keyField] as string : ""}
         rowSelection={rowSelection}
         onRow={this._onRow}
         pagination={false}
