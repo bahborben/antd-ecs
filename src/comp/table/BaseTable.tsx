@@ -48,7 +48,6 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
         let intersection: string[] = originKeys.filter(x => currentKeys.includes(x));
         this.setState({selectedKeys: intersection});
         if(this.props.onRowSelected){
-          console.debug("cdu select:", this.props.data);
           let records = this.props.data.filter(x => intersection.includes(getRowKey(x, this.props.keyField) || ""));
           this.props.onRowSelected(records, intersection);
         }
