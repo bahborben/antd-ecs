@@ -1,26 +1,17 @@
-import React from 'react';
-import { Checkbox, Radio, Table } from 'antd';
-import { TableRowSelection, ColumnsType } from 'antd/lib/table/interface';
-import {TableComponents} from 'rc-table/lib/interface'
+import React, { MouseEventHandler } from 'react';
+import { Checkbox, Radio, Table, TableProps } from 'antd';
+import { TableRowSelection } from 'antd/lib/table/interface';
 
 import { Entity } from '../model';
 import { getRowKey } from './util';
 
-export declare type IBaseTableColumns<E extends Entity> = ColumnsType<E>;
+// export declare type IBaseTableColumns<E extends Entity> = ColumnsType<E>;
 
-export interface IBaseTableProps<E extends Entity> {
-  components?: TableComponents<E>,
-  columns: ColumnsType<E>,
+export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, 'dataSource,rowKey,rowSelection,pagination'> {
   data: E[],
   keyField: keyof E,
   multiSelect?: boolean,
-  onPageChange?: (page: number, pageSize: number) => void;
   onRowSelected?: (records: E[], keys: React.Key[]) => void,
-  onRowFocused?: (record: E, key: React.Key) => void,
-  scroll?: {
-    x?: number | true | string;
-    y?: number | string;
-  },
   clearSelectionOnDataChange?: boolean,
 }
 
@@ -77,11 +68,16 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
 
   private _onRow(data: E, index?: number): React.HTMLAttributes<HTMLElement> {
     return {
+      ...this.props.onRow,
       onClick: (event) => {
         if(index !== undefined){
           if((this.props.multiSelect && event.ctrlKey) || !this.props.multiSelect){
             this._toggleRowSelection(data);
           } 
+        }
+        if(this.props.onRow && 'onClick' in this.props.onRow) {
+          let oc: MouseEventHandler = this.props.onRow['onClick'];
+          oc(event);
         }
       }
     }
@@ -113,16 +109,13 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
 
     return (
       <Table<E>
-        bordered={true}
-        size="small"
-        scroll={this.props.scroll}
-        components={this.props.components}
-        columns={this.props.columns}
+        {...this.props}
         dataSource={this.props.data}
         rowKey={(record) => record ? record[this.props.keyField] as string : ""}
         rowSelection={rowSelection}
         onRow={this._onRow}
         pagination={false}
+        bordered={undefined === this.props.bordered ? true : this.props.bordered}
       />
     );
   }
