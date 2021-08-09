@@ -7,7 +7,8 @@ import { Entity, PageInfo } from '../model';
 import { Input } from 'antd';
 import { PageableRefDataProvider, RefId } from '../selector/interface';
 import Modal, { ModalProps } from 'antd/lib/modal/Modal';
-import DataWindow from './DataWindow';
+import { Column, Row } from 'simple-flexbox';
+import ControlPanel from './ControlPanel';
 
 const {Search} = Input;
 
@@ -112,16 +113,34 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
         }
         onOk={this._handleOk}
       >
-        <DataWindow
-          table={dataTable}
-          page={{
-            status: this.state.pageInfo,
-            conf: {
-              onPageChange: (current, pageSize) => {this._doSearch(this.state.keyword || '', {current, pageSize});},
-              defaultPageSize: this.props.pageSize || 25
-            }
-          }}
-        />
+        <Column style={{height: "100%"}}>
+          <Row flex="0 0 auth">
+            <ControlPanel
+              page={{
+                status: this.state.pageInfo,
+                conf: {                          
+                  onPageChange: (current, pageSize) => {
+                    this._doSearch(this.state.keyword || '', {current, pageSize: this.props.pageSize || 25});
+                  },
+                  showTotal: (t => `共${t}条`),
+                  size: "small",
+                  showLessItems: true,
+                  responsive: true,
+                }
+              }}
+            />
+          </Row>
+          <Row flex="1 1 auto">
+            <BaseTable<E>
+              columns={this.props.columns}
+              data={this.state.data}
+              keyField={this.props.keyField}
+              multiSelect={this.props.multiSelect}
+              onRowSelected={this._handleSelect}
+              clearSelectionOnDataChange={true}
+            />
+          </Row>
+        </Column>        
       </Modal>
     );
   }
