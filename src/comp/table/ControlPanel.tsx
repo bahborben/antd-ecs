@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react';
 import { Row, Column } from 'simple-flexbox';
-import { Data, PageInfo } from 'antd-ecs/model';
 import { Card, Pagination } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
-import BaseForm, { IBaseFormProps } from 'antd-ecs/form/BaseForm';
 import { PaginationProps } from 'antd/lib/pagination';
+import { Data, PageInfo } from '../model';
+import BaseForm, { IBaseFormProps } from '../form/BaseForm';
 
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
@@ -49,6 +49,9 @@ export default class ControlPanel<QC extends Data> extends React.Component<ICont
         <Row flex="0 0 auto">
           <Card>
             <BaseForm<QC>
+              allowReset={true}
+              resetTitle="Reset"
+              submitTitle="Search"
               {...this.props.filters}
               onSubmit={this._handleSearch}
             />

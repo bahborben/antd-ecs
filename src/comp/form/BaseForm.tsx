@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { Form, Row, Col, Button } from 'antd';
+import { Form, Row, Col, Button, Space } from 'antd';
 import { Data } from '../model';
-import { FormItemProps, FormProps } from 'antd/lib/form';
+import { FormInstance, FormItemProps, FormProps } from 'antd/lib/form';
 import { EditorType } from '../editor/editors';
 import { Store } from 'antd/lib/form/interface';
 
@@ -17,7 +17,12 @@ export interface IBaseFormProps<E extends Data> extends Omit<FormProps<E>, 'init
   data: E,
   items: IBaseFormItemProps[],
   cols: 1 | 2 | 3 | 4,
-  onSubmit?: (value: E) => void
+  onSubmit?: (value: E) => void,
+  submitTitle?: string,
+  onCancel?: () => void,
+  cancelTitle?: string,
+  allowReset?: boolean,
+  resetTitle?: string,
 }
 
 const getItem = (prop: IBaseFormItemProps): ReactNode => {
@@ -89,9 +94,11 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
 
 export default class BaseForm<E extends Data> extends React.Component<IBaseFormProps<E>> {
 
+  private formRef = React.createRef<FormInstance>();
+
   constructor(props: IBaseFormProps<E>){
     super(props);
-    this._handleSubmit = this._handleSubmit.bind(this);
+    this._handleSubmit = this._handleSubmit.bind(this);    
   }
 
 
@@ -106,15 +113,18 @@ export default class BaseForm<E extends Data> extends React.Component<IBaseFormP
     return(
       <Form
         {...this.props}
+        ref={this.formRef}
         initialValues={data}
         onFinish={this._handleSubmit}
       >
         {rows}
         {
           <Row align="middle" gutter={8} justify="end">
-            <Col span={2}>
-              <Button type="primary" htmlType="submit">提交</Button>
-            </Col>
+            <Space>
+              {undefined === this.props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{this.props.submitTitle || "Submit"}</Button>}
+              {undefined === this.props.onCancel ? undefined : <Button onClick={e => (this.props.onCancel as () => void)()}>{this.props.cancelTitle || "Cancel"}</Button>}
+              {this.props.allowReset ? <Button onClick={e => this.formRef.current?.resetFields()}>{this.props.resetTitle || "Reset"}</Button> : undefined}
+            </Space>
           </Row>
         }
       </Form>

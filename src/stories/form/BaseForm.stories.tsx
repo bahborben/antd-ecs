@@ -36,6 +36,9 @@ Basic.args = {
   data: roles[1],
   items,
   cols: 2,
-  onSubmit: (value) => console.debug("submit value:", value)
+  onSubmit: (value) => console.debug("submit value:", value),
+  allowReset: true,
+  resetTitle: "重置",
+  submitTitle: "查询",
 };
 
