@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Form, Row, Col, Button, Space } from 'antd';
-import { Data } from '../model';
+import { Data, Entity } from '../model';
 import { FormInstance, FormItemProps, FormProps } from 'antd/lib/form';
 import { EditorType } from '../editor/editors';
 import { Store } from 'antd/lib/form/interface';
@@ -13,7 +13,7 @@ export interface IBaseFormItemProps extends FormItemProps {
   subItems?: IBaseFormItemProps[]
 }
 
-export interface IBaseFormProps<E extends Data> extends Omit<FormProps<E>, 'initialValues,onFinish'>{
+export interface IBaseFormProps<E extends (Entity | Data)> extends Omit<FormProps<E>, 'initialValues,onFinish'>{
   data: E,
   items: IBaseFormItemProps[],
   cols: 1 | 2 | 3 | 4,
@@ -92,7 +92,7 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
   return rows;
 }
 
-export default class BaseForm<E extends Data> extends React.Component<IBaseFormProps<E>> {
+export default class BaseForm<E extends Entity | Data> extends React.Component<IBaseFormProps<E>> {
 
   private formRef = React.createRef<FormInstance>();
 

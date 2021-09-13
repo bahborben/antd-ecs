@@ -1,13 +1,13 @@
 import React, { ReactNode } from 'react';
 import { Descriptions } from 'antd';
 import { DescriptionsProps } from 'antd/lib/descriptions';
-import { Entity, Value } from '../model';
+import { Entity, isEntityValue, Value } from '../model';
 
 export interface IInfoPanelItem<E extends Entity> {
   label: string,
   dataIndex: keyof E,
   span?: number,
-  render?: (value: Value) => ReactNode
+  render?: (value: E) => ReactNode
 }
 
 export interface IInfoPanelProp<E extends Entity> extends DescriptionsProps {
@@ -25,7 +25,7 @@ export default class InfoPanel<E extends Entity> extends React.Component<IInfoPa
   private _createDescriptionItems(data: E, items: IInfoPanelItem<E>[]) {
     return items.map(x => (
       <Descriptions.Item label={x.label}>
-        {x.render ? x.render(data[x.dataIndex]) : data[x.dataIndex]}
+        {x.render ? x.render(data) : data[x.dataIndex]}
       </Descriptions.Item>
     ));
   }

@@ -1,10 +1,21 @@
-import { Moment } from 'moment';
+import { isDate, isMoment, Moment } from 'moment';
 
 export declare type Value = string | number | boolean | Moment | Date | undefined;
 
-export interface Entity {
-  [key: string]: Value
+export function isEntityValue(val: any): val is Value{
+  return val === undefined
+    || isMoment(val)
+    || isDate(val)
+    || ["string", "number", "boolean"].includes(typeof val);
 }
+
+export interface Entity {
+  [key: string]: Value | Entity | Entity[]
+}
+
+// export interface ComplexEntity {
+//   [key: string]: Value | Entity | Entity[]
+// }
 
 export interface Data {
   [key: string]: Value | Value[] | undefined
