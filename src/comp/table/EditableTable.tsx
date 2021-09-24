@@ -122,7 +122,6 @@ export default class EditableTable<E extends Entity> extends React.Component<IEd
   }
 
   private deleteRow(record: E) {
-    debugger
     this.setState({
       editingKey: ""
     });
