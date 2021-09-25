@@ -26,5 +26,4 @@ export interface PageInfo {
   current: number,
   pageSize?: number,
   total?: number,
-  sort?: ISortOrder[],
 }

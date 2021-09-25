@@ -13,6 +13,12 @@ export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pa
   onSort: (odr: ISortOrder[]) => void,
 }
 
+export enum EDataTriggerEvent{
+  Search,
+  PageChanged,
+  Sort
+}
+
 export interface IControlPanelProp<QC extends Data, E extends Entity>{
   operations?: ReactElement<any>,
   columns?: ColumnsType<E>,
@@ -20,7 +26,8 @@ export interface IControlPanelProp<QC extends Data, E extends Entity>{
     status: PageInfo,
     conf: IPagination
   },
-  filters?: IBaseFormProps<QC>
+  filters?: IBaseFormProps<QC>,
+  onLoadData?: (triggerEvent: EDataTriggerEvent, queryCondition: QC, pageInfo: PageInfo, sorts: ISortOrder[]) => void,
 }
 
 interface IControlPanelState {
@@ -69,8 +76,8 @@ export default class ControlPanel<QC extends Data, E extends Entity> extends Rea
     return <Pagination
       {...this.props.page?.conf}
       current={this.props.page?.status.current}
-      pageSize={this.props.page?.status?.pageSize || 20}
-      total={this.props.page?.status?.total || 0}
+      pageSize={this.props.page?.status.pageSize || 20}
+      total={this.props.page?.status.total || 0}
       onChange={this.props.page?.conf.onPageChange}
       onShowSizeChange={this.props.page?.conf.onPageChange}
     />;
