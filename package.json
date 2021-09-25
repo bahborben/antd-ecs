@@ -1,6 +1,6 @@
 {
   "name": "antd-ecs",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "antd enhanced component suit",
   "main": "index.js",
   "scripts": {
