@@ -10,7 +10,6 @@ import { ColumnsType } from 'antd/lib/table';
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
   onPageChange: (page: number, pageSize?: number) => void,
-  onSort: (odr: ISortOrder[]) => void,
 }
 
 export interface IControlPanelProp<QC extends Data, E extends Entity>{
