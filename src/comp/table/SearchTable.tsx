@@ -94,7 +94,6 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
       keyField={this.props.keyField}
       multiSelect={this.props.multiSelect}
       onRowSelected={this._handleSelect}
-      clearSelectionOnDataChange={true}
     />;
     
     return (      
@@ -137,7 +136,6 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
               keyField={this.props.keyField}
               multiSelect={this.props.multiSelect}
               onRowSelected={this._handleSelect}
-              clearSelectionOnDataChange={true}
             />
           </Row>
         </Column>        
