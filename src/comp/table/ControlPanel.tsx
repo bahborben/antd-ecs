@@ -1,6 +1,6 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, RefObject } from 'react';
 import { Row, Column } from 'simple-flexbox';
-import { Card, Pagination } from 'antd';
+import { Card, Form, FormInstance, Pagination } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, ISortOrder, PageInfo } from '../model';
@@ -9,8 +9,8 @@ import { ColumnsType } from 'antd/lib/table';
 
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
-  onPageChange: (page: number, pageSize?: number) => void,
-  onSort: (odr: ISortOrder[]) => void,
+  // onPageChange: (page: number, pageSize?: number) => void,
+  // onSort: (odr: ISortOrder[]) => void,
 }
 
 export enum EDataTriggerEvent{
@@ -24,10 +24,10 @@ export interface IControlPanelProp<QC extends Data, E extends Entity>{
   columns?: ColumnsType<E>,
   page?: {
     status: PageInfo,
-    conf: IPagination
+    conf: IPagination,
   },
   filters?: IBaseFormProps<QC>,
-  onLoadData?: (triggerEvent: EDataTriggerEvent, queryCondition: QC, pageInfo: PageInfo, sorts: ISortOrder[]) => void,
+  onLoadData?: (triggerEvent: EDataTriggerEvent, queryCondition: QC, pageInfo?: PageInfo) => void,
 }
 
 interface IControlPanelState {
@@ -35,6 +35,8 @@ interface IControlPanelState {
 }
 
 export default class ControlPanel<QC extends Data, E extends Entity> extends React.Component<IControlPanelProp<QC, E>, IControlPanelState> {
+
+  // private _formRef: FormInstance;
 
   constructor(props: IControlPanelProp<QC, E>) {
     super(props);
@@ -44,13 +46,28 @@ export default class ControlPanel<QC extends Data, E extends Entity> extends Rea
     this._handleSearch = this._handleSearch.bind(this);
     this._createFilterForm = this._createFilterForm.bind(this);
     this._getPagination = this._getPagination.bind(this);
+    this._handlePageChange = this._handlePageChange.bind(this);
+    // [this._formRef] = Form.useForm();
   }
 
   private _handleSearch(condition: QC) {
     this.setState({showFilterForm: false});
-    let onQuerySubmit = this.props.filters?.onSubmit;
-    if(onQuerySubmit)
-      onQuerySubmit(condition);
+    // let onQuerySubmit = this.props.filters?.onSubmit;
+    // if(onQuerySubmit)
+    //   onQuerySubmit(condition);
+    if(this.props.onLoadData){
+      this.props.onLoadData(EDataTriggerEvent.Search, condition, this.props.page?.status);
+    }
+  }
+
+  private _handlePageChange(page: number, pageSize?: number) {
+    if(this.props.onLoadData){
+      this.props.onLoadData(
+        EDataTriggerEvent.PageChanged,
+        this.props.filters?.data || {} as QC,
+        {current: page, pageSize, sorts: this.props.page?.status.sorts}
+      );
+    }
   }
 
   private _createFilterForm() {
@@ -59,6 +76,7 @@ export default class ControlPanel<QC extends Data, E extends Entity> extends Rea
         <Row flex="0 0 auto">
           <Card>
             <BaseForm<QC>
+              // form={this._formRef}
               allowReset={true}
               resetTitle="Reset"
               submitTitle="Search"
@@ -76,10 +94,10 @@ export default class ControlPanel<QC extends Data, E extends Entity> extends Rea
     return <Pagination
       {...this.props.page?.conf}
       current={this.props.page?.status.current}
-      pageSize={this.props.page?.status.pageSize || 20}
+      pageSize={this.props.page?.status.pageSize || this.props.page?.conf.defaultPageSize || 25}
       total={this.props.page?.status.total || 0}
-      onChange={this.props.page?.conf.onPageChange}
-      onShowSizeChange={this.props.page?.conf.onPageChange}
+      onChange={this._handlePageChange}
+      onShowSizeChange={this._handlePageChange}
     />;
   }
 
