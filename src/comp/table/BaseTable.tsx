@@ -12,7 +12,7 @@ export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, '
   keyField: keyof E,
   multiSelect?: boolean,
   onRowSelected?: (records: E[], keys: React.Key[]) => void,
-  clearSelectionOnDataChange?: boolean,
+  // clearSelectionOnDataChange?: boolean,
 }
 
 interface IBaseTableState {
@@ -30,23 +30,23 @@ export default class BaseTable<E extends Entity> extends React.Component<IBaseTa
     this._onRow = this._onRow.bind(this);
   }
 
-  componentDidUpdate(prevProps: IBaseTableProps<E>) {
-    if (this.props.data !== prevProps.data) {
-      if(!this.props.clearSelectionOnDataChange){
-        // rearrange selection when data is refreshed
-        let originKeys: string[] = this.state.selectedKeys;
-        let currentKeys: string[] = this.props.data.filter(x => getRowKey(x, this.props.keyField)).map(x => getRowKey(x, this.props.keyField) || "");
-        let intersection: string[] = originKeys.filter(x => currentKeys.includes(x));
-        this.setState({selectedKeys: intersection});
-        if(this.props.onRowSelected){
-          let records = this.props.data.filter(x => intersection.includes(getRowKey(x, this.props.keyField) || ""));
-          this.props.onRowSelected(records, intersection);
-        }
-      } else {
-        this.setState({selectedKeys: []});
-      }
-    }
-  }
+  // componentDidUpdate(prevProps: IBaseTableProps<E>) {
+  //   if (this.props.data !== prevProps.data) {
+  //     if(!this.props.clearSelectionOnDataChange){
+  //       // rearrange selection when data is refreshed
+  //       let originKeys: string[] = this.state.selectedKeys;
+  //       let currentKeys: string[] = this.props.data.filter(x => getRowKey(x, this.props.keyField)).map(x => getRowKey(x, this.props.keyField) || "");
+  //       let intersection: string[] = originKeys.filter(x => currentKeys.includes(x));
+  //       this.setState({selectedKeys: intersection});
+  //       if(this.props.onRowSelected){
+  //         let records = this.props.data.filter(x => intersection.includes(getRowKey(x, this.props.keyField) || ""));
+  //         this.props.onRowSelected(records, intersection);
+  //       }
+  //     } else {
+  //       this.setState({selectedKeys: []});
+  //     }
+  //   }
+  // }
 
   private _toggleRowSelection(rec: E): void {
     let {selectedKeys} = this.state;
