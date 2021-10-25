@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import { Form, Button, Row, Col, Modal } from 'antd';
+import { Form, Button, Row, Col, Modal, Space } from 'antd';
 import { ColumnType, ColumnsType } from 'antd/lib/table/interface';
 import { SaveOutlined, EditOutlined, DeleteOutlined, UndoOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Entity } from '../model';
@@ -166,23 +166,23 @@ export default class EditableTable<E extends Entity> extends React.Component<IEd
       render: (_:any, record: E) => {
         return this._isRowEditable(record) ? 
           (
-            <React.Fragment>
+            <Space>
               <Button shape="circle" onClick={() => this._saveRow(record)}><SaveOutlined /></Button>
               <Button shape="circle" onClick={() => this._cancelEdit(record)}><UndoOutlined /></Button>
-            </React.Fragment>
+            </Space>
           )
           : (
-            <Row align="middle" justify="center" gutter={5}>
+            <Space>
               {
-                (this.props.onSaveRow) ? (<Col><Button shape="circle" onClick={() => this._editRow(record)}><EditOutlined /></Button></Col>) : null
+                (this.props.onSaveRow) ? (<Button shape="circle" onClick={() => this._editRow(record)}><EditOutlined /></Button>) : null
               }              
               {
-                (this.props.onDeleteRow) ? (<Col><Button shape="circle" onClick={() => this.deleteRow(record)}><DeleteOutlined /></Button></Col>) : null
+                (this.props.onDeleteRow) ? (<Button shape="circle" onClick={() => this.deleteRow(record)}><DeleteOutlined /></Button>) : null
               }
-            </Row>
+            </Space>
           )
       },
-      width: 100
+      width: 80
     });
     return cols;
   }

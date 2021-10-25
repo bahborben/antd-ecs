@@ -3,9 +3,8 @@ import { Row, Column } from 'simple-flexbox';
 import { Card, Form, FormInstance, Pagination } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
-import { Data, Entity, ISortOrder, PageInfo } from '../model';
+import { Data, PageInfo } from '../model';
 import BaseForm, { IBaseFormProps } from '../form/BaseForm';
-import { ColumnsType } from 'antd/lib/table';
 
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
@@ -19,9 +18,8 @@ export enum EDataTriggerEvent{
   Sort
 }
 
-export interface IControlPanelProp<QC extends Data, E extends Entity>{
+export interface IControlPanelProp<QC extends Data>{
   operations?: ReactElement<any>,
-  columns?: ColumnsType<E>,
   page?: {
     status: PageInfo,
     conf: IPagination,
@@ -34,11 +32,11 @@ interface IControlPanelState {
   showFilterForm: boolean
 }
 
-export default class ControlPanel<QC extends Data, E extends Entity> extends React.Component<IControlPanelProp<QC, E>, IControlPanelState> {
+export default class ControlPanel<QC extends Data> extends React.Component<IControlPanelProp<QC>, IControlPanelState> {
 
   // private _formRef: FormInstance;
 
-  constructor(props: IControlPanelProp<QC, E>) {
+  constructor(props: IControlPanelProp<QC>) {
     super(props);
     this.state = {
       showFilterForm: false

@@ -4,7 +4,7 @@ import { ColumnsType } from 'antd/lib/table/interface';
 
 import BaseTable from '../table/BaseTable';
 import { Entity, PageInfo } from '../model';
-import { Input } from 'antd';
+import { Input, Spin } from 'antd';
 import { PageableRefDataProvider, RefId } from '../selector/interface';
 import Modal, { ModalProps } from 'antd/lib/modal/Modal';
 import { Column, Row } from 'simple-flexbox';
@@ -28,6 +28,7 @@ interface ISearchTableState<E extends Entity> {
   data: E[],
   selected: E[],
   pageInfo: PageInfo,
+  loading: boolean,
 }
 
 export default class SearchTable<E extends Entity, ID extends RefId> extends React.Component<ISearchTableProps<E, ID>, ISearchTableState<E>> {
@@ -38,7 +39,8 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
       keyword: this.props.keyword,
       data: [],
       selected: [],
-      pageInfo: {current: 0, pageSize: this.props.pageSize || 25, total: 0}
+      pageInfo: {current: 0, pageSize: this.props.pageSize || 25, total: 0},
+      loading: false,
     }
 
     this._handleSearch = this._handleSearch.bind(this);
@@ -62,10 +64,11 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
   }
 
   private _doSearch(keyword: string, pi: PageInfo): void {
+    this.setState({loading: true});
     (async () => {
       let [data, pageInfo] = await this.props.onLoadData({keyword}, pi);
-      this.setState({data, pageInfo});
-  })();
+      this.setState({data, pageInfo, loading: false});
+    })();
   }
 
   private _handleSearch(keyword?: string): void {
@@ -94,7 +97,6 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
       keyField={this.props.keyField}
       multiSelect={this.props.multiSelect}
       onRowSelected={this._handleSelect}
-      clearSelectionOnDataChange={true}
     />;
     
     return (      
@@ -113,6 +115,7 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
         }
         onOk={this._handleOk}
       >
+        <Spin size="default" delay={300} spinning={this.state.loading}>
         <Column style={{height: "100%"}}>
           <Row flex="0 0 auth">
             <ControlPanel
@@ -137,10 +140,10 @@ export default class SearchTable<E extends Entity, ID extends RefId> extends Rea
               keyField={this.props.keyField}
               multiSelect={this.props.multiSelect}
               onRowSelected={this._handleSelect}
-              clearSelectionOnDataChange={true}
             />
           </Row>
-        </Column>        
+        </Column>
+        </Spin>
       </Modal>
     );
   }
