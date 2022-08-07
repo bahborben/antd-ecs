@@ -31,7 +31,7 @@ Basic.args = {
   data: depts,
   keyField: "id",
   parentField: "parentId",
-  title: (e) => e.name,
+  title: (e) => {return e.name as string || ""},
   searchable: true,
   edit: {
     onCreate: () => {},

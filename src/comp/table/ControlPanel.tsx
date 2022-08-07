@@ -1,4 +1,4 @@
-import React, { ReactElement, RefObject } from 'react';
+import React, { ReactElement,  PropsWithChildren, useState } from 'react';
 import { Row, Column } from 'simple-flexbox';
 import { Card, Form, FormInstance, Pagination } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
@@ -8,14 +8,7 @@ import BaseForm, { IBaseFormProps } from '../form/BaseForm';
 
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
-  // onPageChange: (page: number, pageSize?: number) => void,
-  // onSort: (odr: ISortOrder[]) => void,
-}
-
-export enum EDataTriggerEvent{
-  Search,
-  PageChanged,
-  Sort
+  onPageChange: (page: number, pageSize?: number) => void,
 }
 
 export interface IControlPanelProp<QC extends Data>{
@@ -24,62 +17,39 @@ export interface IControlPanelProp<QC extends Data>{
     status: PageInfo,
     conf: IPagination,
   },
-  filters?: IBaseFormProps<QC>,
-  onLoadData?: (triggerEvent: EDataTriggerEvent, queryCondition: QC, pageInfo?: PageInfo) => void,
+  filters?: PropsWithChildren<IBaseFormProps<QC>>,
 }
 
-interface IControlPanelState {
-  showFilterForm: boolean
-}
+function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
 
-export default class ControlPanel<QC extends Data> extends React.Component<IControlPanelProp<QC>, IControlPanelState> {
+  const [showFilterForm, setShowFilterForm] = useState(false);
 
-  // private _formRef: FormInstance;
-
-  constructor(props: IControlPanelProp<QC>) {
-    super(props);
-    this.state = {
-      showFilterForm: false
-    }
-    this._handleSearch = this._handleSearch.bind(this);
-    this._createFilterForm = this._createFilterForm.bind(this);
-    this._getPagination = this._getPagination.bind(this);
-    this._handlePageChange = this._handlePageChange.bind(this);
-    // [this._formRef] = Form.useForm();
+  const handlePageChange = (page: number, pageSize?: number) => {
+    if(props.page?.conf.onPageChange)
+      props.page?.conf.onPageChange(page, pageSize);
   }
 
-  private _handleSearch(condition: QC) {
-    this.setState({showFilterForm: false});
-    // let onQuerySubmit = this.props.filters?.onSubmit;
-    // if(onQuerySubmit)
-    //   onQuerySubmit(condition);
-    if(this.props.onLoadData){
-      this.props.onLoadData(EDataTriggerEvent.Search, condition, this.props.page?.status);
-    }
+  const getPagination = (): ReactElement<PaginationProps> => {
+    return <Pagination
+      {...props.page?.conf}
+      current={props.page?.status.current}
+      pageSize={props.page?.status.pageSize || props.page?.conf.defaultPageSize || 25}
+      total={props.page?.status.total || 0}
+      onChange={handlePageChange}
+      onShowSizeChange={handlePageChange}
+    />;
   }
 
-  private _handlePageChange(page: number, pageSize?: number) {
-    if(this.props.onLoadData){
-      this.props.onLoadData(
-        EDataTriggerEvent.PageChanged,
-        this.props.filters?.data || {} as QC,
-        {current: page, pageSize, sorts: this.props.page?.status.sorts}
-      );
-    }
-  }
-
-  private _createFilterForm() {
-    if(this.state.showFilterForm && this.props.filters) {
+  const createFilterForm = () => {
+    if(showFilterForm && props.filters) {
       return (
         <Row flex="0 0 auto">
           <Card>
             <BaseForm<QC>
-              // form={this._formRef}
               allowReset={true}
               resetTitle="Reset"
               submitTitle="Search"
-              {...this.props.filters}
-              onSubmit={this._handleSearch}
+              {...props.filters}
             />
           </Card>
         </Row>
@@ -88,44 +58,33 @@ export default class ControlPanel<QC extends Data> extends React.Component<ICont
     return null;
   }
 
-  private _getPagination(): ReactElement<PaginationProps> {
-    return <Pagination
-      {...this.props.page?.conf}
-      current={this.props.page?.status.current}
-      pageSize={this.props.page?.status.pageSize || this.props.page?.conf.defaultPageSize || 25}
-      total={this.props.page?.status.total || 0}
-      onChange={this._handlePageChange}
-      onShowSizeChange={this._handlePageChange}
-    />;
-  }
-
-  render(){
-    return (
-      <Column flex="1 1 auto" alignContent="space-around">
-        <Row flex="0 0 auto">
-          {
-            this.props.filters ? (
-              <Column flex="0 0 45px" vertical="center" horizontal="center">
-                {this.state.showFilterForm ? 
-                  <UpCircleOutlined style={{fontSize: 18}} onClick={e => this.setState({showFilterForm: false})} />
-                  : <SearchOutlined style={{fontSize: 18}} onClick={e => this.setState({showFilterForm: true})} />
-                }
-              </Column>
-            ) : null
-          }
-          <Column flex="1 1 auto">
-            {this.props.operations}
-          </Column>
-          {
-            this.props.page ? (
-              <Column flex="0 0 25vw" vertical="center" horizontal="end">
-                {this._getPagination()}
-              </Column>
-            ) : null
-          }
-        </Row>
-        {this._createFilterForm()}
-      </Column>
-    );
-  }
+  return (
+    <Column flex="1 1 auto" alignContent="space-around">
+      <Row flex="0 0 auto">
+        {
+          props.filters ? (
+            <Column flex="0 0 45px" vertical="center" horizontal="center">
+              {showFilterForm ? 
+                <UpCircleOutlined style={{fontSize: 18}} onClick={e => setShowFilterForm(false)} />
+                : <SearchOutlined style={{fontSize: 18}} onClick={e => setShowFilterForm(true)} />
+              }
+            </Column>
+          ) : null
+        }
+        <Column flex="1 1 auto">
+          {props.operations}
+        </Column>
+        {
+          props.page ? (
+            <Column flex="0 0 25vw" vertical="center" horizontal="end">
+              {getPagination()}
+            </Column>
+          ) : null
+        }
+      </Row>
+      {createFilterForm()}
+    </Column>
+  );
 }
+
+export default ControlPanel;

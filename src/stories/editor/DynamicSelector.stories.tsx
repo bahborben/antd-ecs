@@ -3,7 +3,7 @@ import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.compact.css';
 
 import DynamicSelector, { IDynamicSelectorProps } from '../../comp/selector/DynamicSelector';
-import { Entity } from '../../comp/model';
+import { Data, Entity } from '../../comp/model';
 import { RefDataProvider } from '../../comp/selector/interface';
 
 export default {
@@ -11,7 +11,7 @@ export default {
   component: DynamicSelector,
 } as Meta;
 
-const fakeData: RefDataProvider<Entity, string> = async (condition: {}): Promise<Entity[]> => {
+const fakeData: RefDataProvider<Entity, string> = async (condition: Data): Promise<Entity[]> => {
   const data = [
     {code: "10001", name: "Wizard", gender: "female"},
     {code: "10002", name: "Barbarian", gender: "male"},
@@ -24,7 +24,7 @@ const fakeData: RefDataProvider<Entity, string> = async (condition: {}): Promise
     });
   else
     return new Promise((resolve, reject) => {
-      resolve(data.filter(x => (x.name as string).indexOf(condition["keyword"]) >= 0));
+      resolve(data.filter(x => (x.name as string).indexOf(condition["keyword"] as string) >= 0));
     });
 }
 

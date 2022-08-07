@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Select } from 'antd';
 import { Entity } from '../model';
 import { RefId } from './interface';
@@ -6,9 +6,7 @@ import { RefId } from './interface';
 const {Option} = Select;
 
 export interface IStaticSelectorProps<E extends Entity, ID extends RefId> {
-  /**
-   * 选项数据
-   */
+  /* 选项数据 */
   readonly data: E[],  
   /* 当前选项值 */
   value?: ID,
@@ -23,41 +21,33 @@ export interface IStaticSelectorProps<E extends Entity, ID extends RefId> {
   style?: React.CSSProperties
 }
 
-interface IStaticSelectorState<ID extends (string | number)> {
-  selectedValue?: ID
+function StaticSelector<E extends Entity, ID extends RefId>(props: React.PropsWithChildren<IStaticSelectorProps<E, ID>>){
+
+  const [selectedValue, setSelectedValue] = useState(undefined as ID | undefined);
+
+  const handleChange = (value: ID): void => {
+    if(props.onChange)
+      props.onChange(value);
+    setSelectedValue(value);
+  }
+
+  let {data, idField, optionRender, value, allowClear, placeholder, defaultValue, style} = props;
+  return (
+    <Select
+      value={value || selectedValue}
+      onChange={handleChange}
+      defaultValue={defaultValue}
+      allowClear={allowClear}
+      placeholder={placeholder}
+      style={style}
+    >
+      {data.map(d => (
+        <Option key={d[idField] as string} value={(d[idField] || "") as string}>
+          {optionRender(d)}
+        </Option>
+      ))}
+    </Select>
+  );
 }
 
-export default class StaticSelector<E extends Entity, ID extends RefId> extends React.Component<IStaticSelectorProps<E, ID>, IStaticSelectorState<ID>>{
-
-  constructor(props: IStaticSelectorProps<E, ID>) {
-    super(props);
-    this.state = {};
-    this._handleChange = this._handleChange.bind(this);
-  }
-
-  private _handleChange(value: ID) {
-    if(this.props.onChange)
-      this.props.onChange(value);
-    this.setState({selectedValue: value});
-  }
-
-  render(){
-    let {data, idField, optionRender, value, allowClear, placeholder, defaultValue, style} = this.props;
-    return (
-      <Select
-        value={value || this.state.selectedValue}
-        onChange={this._handleChange}
-        defaultValue={defaultValue}
-        allowClear={allowClear}
-        placeholder={placeholder}
-        style={style}
-      >
-        {data.map(d => (
-          <Option key={d[idField] as string} value={(d[idField] || "") as string}>
-            {optionRender(d)}
-          </Option>
-        ))}
-      </Select>
-    );
-  }
-}
+export default StaticSelector;

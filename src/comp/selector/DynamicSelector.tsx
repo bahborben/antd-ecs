@@ -1,8 +1,9 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Select } from 'antd';
 import { Entity } from '../model';
 import { RefDataProvider, RefId, IRefQueryCondition } from './interface';
 import { SelectProps } from 'antd/lib/select';
+import { useDebounce } from '../util';
 
 const {Option} = Select;
 
@@ -14,92 +15,74 @@ export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> exten
   onChange?: (value: ID, record?: E) => void
 }
 
-interface IDynamicSelectorState<E extends Entity, ID extends (string | number)> {
-  data: E[],
-  selectedValue?: ID,
-  keyword?: string,
-  loadTimeout?: NodeJS.Timeout
-}
+function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSelectorProps<E, ID>){
 
-export default class DynamicSelector<E extends Entity, ID extends RefId> extends React.Component<IDynamicSelectorProps<E, ID>, IDynamicSelectorState<E, ID>>{
+  const [data, setData] = useState([] as E[]);
+  const [selectedValue, setSelectedValue] = useState(undefined as ID | undefined);
+  const [keyword, setKeyword] = useState(undefined as string | undefined);
 
-  constructor(props: IDynamicSelectorProps<E, ID>) {
-    super(props);
-    this.state = {
-      data: []
-    };
-    this._handleSearch = this._handleSearch.bind(this);
-    this._handleChange = this._handleChange.bind(this);
-    this._getCurrentValue = this._getCurrentValue.bind(this);
-  }
+  const debouncedKeyword: string | undefined = useDebounce<string | undefined>(keyword, 500);
 
-  componentWillMount(){
-    let currValue = this._getCurrentValue();
+  useEffect(() => {
+    let currValue = getCurrentValue();
     if(currValue !== undefined){
       (async () => {
         let condition: IRefQueryCondition<ID> = {
           refIds: [currValue]
         };
-        let data: E[] = await this.props.onLoadData(condition);
-        this.setState({
-          data
-        });
+        let data: E[] = await props.onLoadData(condition);
+        setData(data);        
       })();
     }
+  }, []);
+
+  useEffect(() => {
+    if(debouncedKeyword)
+      handleSearch(debouncedKeyword);
+  }, [debouncedKeyword]);
+
+  const getCurrentValue = (): ID | undefined => {
+    return props.value || selectedValue || props.defaultValue || undefined;
   }
 
-  private _getCurrentValue(): ID | undefined {
-    return this.props.value || this.state.selectedValue || this.props.defaultValue;
-  }
-
-  private async _handleSearch(value: string) {
-    if(this.state.loadTimeout)
-      clearTimeout(this.state.loadTimeout);
-    let id = this._getCurrentValue();
+  const handleSearch = async (value: string) => {
+    let id = getCurrentValue();
     let condition: IRefQueryCondition<ID> = {
       refIds: id ? [id] : [],
       keyword: value
     };
-    let loadTimeout = setTimeout(async () => {
-      let data: E[] = await this.props.onLoadData(condition);
-      this.setState({
-        data
-      });
-    }, 600);
-    this.setState({loadTimeout});
+    let data: E[] = await props.onLoadData(condition);
+    setData(data);
   }
 
-  private _handleChange(value: ID) {
-    if(this.props.onChange){
-      let rec = this.state.data.find(x => value === x[this.props.idField]);
-      this.props.onChange(value, rec);
+  const handleChange = (value: ID): void => {
+    if(props.onChange){
+      let rec = data.find(x => value === x[props.idField]);
+      props.onChange(value, rec);
     }
-    this.setState({
-      selectedValue: value
-    });
+    setSelectedValue(value);    
   }
 
-  render(){
-    let {idField, optionRender} = this.props;
-    let {data} = this.state;
-    return (
-      <Select
-        {...this.props}
-        showSearch
-        showArrow={true}
-        value={this._getCurrentValue()}
-        onChange={this._handleChange}
-        onSearch={this._handleSearch}
-        filterOption={false}
-      >
-        {
-          data.map(d => (
-            <Option key={d[idField] as string} value={(d[idField] || "") as string}>
-              {optionRender(d)}
-            </Option>
-          ))
-        }
-      </Select>
-    );
-  }
+  let {idField, optionRender} = props;
+  return (
+    <Select
+      {...props}
+      showSearch
+      showArrow={true}
+      value={getCurrentValue()}
+      onChange={handleChange}
+      onSearch={handleSearch}
+      filterOption={false}
+    >
+      {
+        data.map(d => (
+          <Option key={d[idField] as string} value={(d[idField] || "") as string}>
+            {optionRender(d)}
+          </Option>
+        ))
+      }
+    </Select>
+  );
 }
+
+export default DynamicSelector;

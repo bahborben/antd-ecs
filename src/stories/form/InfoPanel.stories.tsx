@@ -5,7 +5,6 @@ import 'antd/dist/antd.compact.css';
 import { InfoPanel } from '../../comp/form';
 import { IInfoPanelItem, IInfoPanelProp } from '../../comp/form/interface';
 import { Entity } from '../../comp/model';
-import { ETDatePicker, ETInput } from '../../comp/editor/editors';
 import moment from 'moment';
 
 export default {
@@ -22,7 +21,7 @@ const roles: Role[] = [
 ];
 const items: IInfoPanelItem<Role>[] = [
   {dataIndex: "code", label: "编号", span: 1},
-  {dataIndex: "name", label: "姓名", span: 1, render: (value) => <span color='red'>{value}</span>},
+  {dataIndex: "name", label: "姓名", span: 1, render: (value) => <span color='red'>{`--${value.name}--`}</span>},
   {dataIndex: "gender", label: "性别", span: 1},
 ];
 

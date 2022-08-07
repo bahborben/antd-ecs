@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { TreeSelect } from 'antd';
 import { Entity } from '../model';
 import { RefId } from './interface';
@@ -22,34 +22,24 @@ export interface ITreeSelectorProps<E extends Entity, ID extends RefId> {
   style?: React.CSSProperties
 }
 
-interface ITreeSelectorState<ID extends (string | number)> {
-  selectedValue?: ID
-}
+function TreeSelector<E extends Entity, ID extends RefId>(props: React.PropsWithChildren<ITreeSelectorProps<E, ID>>){
 
-export default class TreeSelector<E extends Entity, ID extends RefId> extends React.Component<ITreeSelectorProps<E, ID>, ITreeSelectorState<ID>>{
+  const [selectedValue, setSelectedValue] = useState(undefined as ID | undefined);
 
-  constructor(props: ITreeSelectorProps<E, ID>) {
-    super(props);
-    this.state = {};
-    this._handleChange = this._handleChange.bind(this);
-    this._createTreeNodes = this._createTreeNodes.bind(this);
-    this.__internalCreateTreeNodes = this.__internalCreateTreeNodes.bind(this);
+  const handleChange = (value: ID) => {
+    if(props.onChange)
+      props.onChange(value);
+    setSelectedValue(value);
   }
 
-  private _handleChange(value: ID) {
-    if(this.props.onChange)
-      this.props.onChange(value);
-    this.setState({selectedValue: value});
-  }
-
-  private _createTreeNodes(): ReactNode[] {
-    let {data, idField, parentField, title, comparator, virtualRoot} = this.props;
+  const createTreeNodes = (): ReactNode[] => {
+    let {data, idField, parentField, title, comparator, virtualRoot} = props;
     let nodes: ITreeNode<E>[] = composeTree(data, idField, parentField, title, comparator, virtualRoot);
-    return this.__internalCreateTreeNodes(nodes);
+    return internalCreateTreeNodes(nodes);
   }
 
-  private __internalCreateTreeNodes(nodes: ITreeNode<E>[]): ReactNode[] {
-    const {idField, title} = this.props;
+  const internalCreateTreeNodes = (nodes: ITreeNode<E>[]): ReactNode[] => {
+    const {idField, title} = props;
     return nodes.map(n => {
       return (
         <TreeNode
@@ -57,26 +47,26 @@ export default class TreeSelector<E extends Entity, ID extends RefId> extends Re
           value={n.entity[idField] as RefId}
           title={title ? title(n.entity) : n.entity[idField]}
         >
-          {n.children ? this.__internalCreateTreeNodes(n.children as ITreeNode<E>[]) : null}
+          {n.children ? internalCreateTreeNodes(n.children as ITreeNode<E>[]) : null}
         </TreeNode>
       );
     });
   }
 
-  render(){
-    let {value, allowClear, placeholder, defaultValue, style} = this.props;
-    return (
-      <TreeSelect
-        showSearch={true}
-        value={value || this.state.selectedValue}
-        onChange={this._handleChange}
-        defaultValue={defaultValue}
-        allowClear={allowClear}
-        placeholder={placeholder}
-        style={style}
-      >
-        {this._createTreeNodes()}
-      </TreeSelect>
-    );
-  }
+  let {value, allowClear, placeholder, defaultValue, style} = props;
+  return (
+    <TreeSelect
+      showSearch={true}
+      value={value || selectedValue}
+      onChange={handleChange}
+      defaultValue={defaultValue}
+      allowClear={allowClear}
+      placeholder={placeholder}
+      style={style}
+    >
+      {createTreeNodes()}
+    </TreeSelect>
+  );
 }
+
+export default TreeSelector;

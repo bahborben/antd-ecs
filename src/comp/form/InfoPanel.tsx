@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Descriptions } from 'antd';
 import { DescriptionsProps } from 'antd/lib/descriptions';
-import { Entity, isEntityValue, Value } from '../model';
+import { Entity } from '../model';
 
 export interface IInfoPanelItem<E extends Entity> {
   label: string,
@@ -15,29 +15,22 @@ export interface IInfoPanelProp<E extends Entity> extends DescriptionsProps {
   items: IInfoPanelItem<E>[]
 }
 
-export default class InfoPanel<E extends Entity> extends React.Component<IInfoPanelProp<E>> {
+function InfoPanel<E extends Entity>(props: React.PropsWithChildren<IInfoPanelProp<E>>) {
 
-  constructor(props: IInfoPanelProp<E>) {
-    super(props);
-    this._createDescriptionItems = this._createDescriptionItems.bind(this);
-  }
-
-  private _createDescriptionItems(data: E, items: IInfoPanelItem<E>[]) {
+  const createDescriptionItems = (data: E, items: IInfoPanelItem<E>[]) => {
     return items.map(x => (
       <Descriptions.Item label={x.label}>
-        {x.render ? x.render(data) : data[x.dataIndex]}
+        {x.render ? x.render(data) : (data[x.dataIndex] as string)}
       </Descriptions.Item>
     ));
   }
 
-  render() {
-    const {data, items} = this.props;
-    return (
-      <Descriptions
-        {...this.props}
-      >
-        {this._createDescriptionItems(data, items)}
-      </Descriptions>
-    );
-  }
+  const {data, items} = props;
+  return (
+    <Descriptions {...props} >
+      {createDescriptionItems(data, items)}
+    </Descriptions>
+  );
 }
+
+export default InfoPanel;

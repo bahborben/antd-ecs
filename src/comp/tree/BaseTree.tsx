@@ -1,4 +1,4 @@
-import React, { ReactText } from 'react';
+import React, { Key, useEffect, useState } from 'react';
 import { Tree } from 'antd';
 import { Entity } from '../model';
 import { composeTree, ITreeNode } from './util';
@@ -15,40 +15,28 @@ export interface IBaseTreeProps<E extends Entity> {
   onSelect?: (node: E | null) => void
 }
 
-interface IBaseTreeState {
-  expandedKeys: string[]
-}
+function BaseTree<E extends Entity>(props: React.PropsWithChildren<IBaseTreeProps<E>>) {
 
-export default class BaseTree<E extends Entity> extends React.Component<IBaseTreeProps<E>, IBaseTreeState> {
+  const [expandedKeys, setExpandedKeys] = useState([] as string[]);
 
-  constructor(props: IBaseTreeProps<E>){
-    super(props);
-    this.state = {expandedKeys: []};
-    this._createTreeNodes = this._createTreeNodes.bind(this);
-    this._handleExpand = this._handleExpand.bind(this);
-    this._handleSelect = this._handleSelect.bind(this);
-  }
+  useEffect(() => {
+    // 如果props指定了展开节点，则增补到当前展开节点中
+    if(props.expandedKeys && props.expandedKeys.length > 0){
+      setExpandedKeys(Array.from(new Set(expandedKeys.concat(props.expandedKeys || []))));
+    }    
+  }, [props.expandedKeys]);
 
-  componentDidUpdate(prevProps: IBaseTreeProps<E>) {
-    let eks = new Set(this.props.expandedKeys);
-    if (new Set(prevProps.expandedKeys).size !== eks.size) {
-      // 如果props指定了展开节点，则增补到当前展开节点中
-      let curr = new Set(this.state.expandedKeys.concat(this.props.expandedKeys || []));
-      this.setState({expandedKeys: Array.from(new Set(curr))});
-    }
-  }
-
-  private _createTreeNodes(): ITreeNode<E>[]{
-    let {data, keyField, parentField, title, comparator, virtualRoot} = this.props;
+  const createTreeNodes = (): ITreeNode<E>[] => {
+    let {data, keyField, parentField, title, comparator, virtualRoot} = props;
     return composeTree(data, keyField, parentField, title, comparator, virtualRoot);
   }
 
-  private _handleExpand(keys: ReactText[], info: any) {
-    this.setState({expandedKeys: keys as string[]});
+  const handleExpand = (keys: Key[], info: any): void => {
+    setExpandedKeys(keys as string[]);
   }
 
-  private _handleSelect(keys: ReactText[], info: object){
-    let {data, keyField, onSelect} = this.props;
+  const handleSelect = (keys: Key[], info: object): void => {
+    let {data, keyField, onSelect} = props;
     if(onSelect){
       if(keys && keys.length > 0){
         let key = keys[0];  // 只处理单选
@@ -65,18 +53,17 @@ export default class BaseTree<E extends Entity> extends React.Component<IBaseTre
     }
   }
 
-  render(){
-    let {virtualRoot, expandedKeys, defaultExpandedKeys} = this.props;
-    return (
-      <Tree
-        showLine
-        showIcon
-        expandedKeys={this.state.expandedKeys}
-        onExpand={this._handleExpand}
-        treeData={this._createTreeNodes()}
-        defaultExpandedKeys={defaultExpandedKeys ? defaultExpandedKeys : ((virtualRoot) ? [virtualRoot.key] : [])}
-        onSelect={this._handleSelect}
-      />
-    );
-  }
+  return (
+    <Tree
+      showLine
+      showIcon
+      expandedKeys={expandedKeys}
+      onExpand={handleExpand}
+      treeData={createTreeNodes()}
+      defaultExpandedKeys={props.defaultExpandedKeys ? props.defaultExpandedKeys : ((props.virtualRoot) ? [props.virtualRoot.key] : [])}
+      onSelect={handleSelect}
+    />
+  );
 }
+
+export default BaseTree;

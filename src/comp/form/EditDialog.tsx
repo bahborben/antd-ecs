@@ -1,7 +1,6 @@
-import React, { ReactNode, RefObject } from 'react';
+import React, { ReactNode } from 'react';
 import { Form, Modal } from 'antd';
 import { Entity } from '../model';
-import { FormInstance } from 'antd/lib/form';
 import { IBaseFormProps, getLayout } from './BaseForm';
 
 export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E>, "onSubmit"> {
@@ -13,60 +12,52 @@ export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E
   onCancel?: () => void
 }
 
-export default class EditDialog<E extends Entity> extends React.Component<IEditDialogProp<E>> {
+function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
 
-  private _formRef: RefObject<FormInstance>;
+  const [formRef] = Form.useForm();
 
-  constructor(props: IEditDialogProp<E>){
-    super(props);
-    this._handleOk = this._handleOk.bind(this);
-    this._handleCancel = this._handleCancel.bind(this);
-    this._formRef = React.createRef();
-  }
-
-
-  private _handleOk(e: React.MouseEvent<HTMLElement>){
-    this._formRef?.current?.validateFields().then(values => {
-      this._formRef?.current?.resetFields();
-      if(this.props.onOk !== undefined)
-        this.props.onOk(values as E);
+  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
+    formRef.validateFields().then(values => {
+      formRef.resetFields();
+      if(props.onOk !== undefined)
+        props.onOk(values as E);
     }).catch(info => {
       console.log('Validate Failed:', info);
     });
   }
 
-  private _handleCancel(e: React.MouseEvent<HTMLElement>){
-    if(this.props.onCancel)
-      this.props.onCancel();
+  const handleCancel = (e: React.MouseEvent<HTMLElement>) => {
+    if(props.onCancel)
+      props.onCancel();
   }
   
-  render(){
-    let {
-      visible, title, okTitle, cancelTitle, 
-      data, items, cols, validateMessages
-    } = this.props
-    let rows: ReactNode[] = getLayout(items, cols);
-    return(
-      <Modal
-        visible={visible}
-        title={title}
-        okText={okTitle ? okTitle : "确定"}
-        cancelText={cancelTitle ? cancelTitle : "取消"}
-        onOk={this._handleOk}
-        onCancel={this._handleCancel}
-        width="80%"
-        destroyOnClose={true}
-      >
-        <Form
-          ref={this._formRef}
-          className="base-form"
-          labelAlign="right"
-          initialValues={data}
-          validateMessages={validateMessages}
-          scrollToFirstError={true} >
-          {rows}
-        </Form>
-      </Modal>
-    );
-  }
+  let {
+    visible, title, okTitle, cancelTitle, 
+    data, items, cols, validateMessages
+  } = props
+  let rows: ReactNode[] = getLayout(items, cols);
+  return(
+    <Modal
+      visible={visible}
+      title={title}
+      okText={okTitle ? okTitle : "确定"}
+      cancelText={cancelTitle ? cancelTitle : "取消"}
+      onOk={handleOk}
+      onCancel={handleCancel}
+      width="80%"
+      destroyOnClose={true}
+    >
+      <Form
+        form={formRef}
+        className="base-form"
+        labelAlign="right"
+        initialValues={data}
+        validateMessages={validateMessages}
+        scrollToFirstError={true} >
+        {rows}
+      </Form>
+    </Modal>
+  );
 }
+
+export default EditDialog;

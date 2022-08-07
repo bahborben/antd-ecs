@@ -2,8 +2,9 @@ import React from 'react';
 import { Story, Meta } from '@storybook/react/types-6-0';
 import 'antd/dist/antd.compact.css';
 
-import BaseTable, { IBaseTableProps, IBaseTableColumns } from '../../comp//table/BaseTable';
+import BaseTable, { IBaseTableProps } from '../../comp//table/BaseTable';
 import { Entity } from '../../comp/model'
+import { ColumnsType } from 'antd/lib/table';
 
 export default {
   title: 'Antd-ECS/Table/BaseTable',
@@ -22,7 +23,7 @@ const data1: Entity[] = [
   {code: "03921", name: "Bob", gender: "male", age: "40"},
 ];
 
-const columns: IBaseTableColumns<Entity> = [
+const columns: ColumnsType<Entity> = [
   {title: "code", dataIndex: "code"},
   {title: "name", dataIndex: "name"},
   {title: "gender", dataIndex: "gender"},

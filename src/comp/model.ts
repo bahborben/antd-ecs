@@ -28,3 +28,7 @@ export interface PageInfo {
   total?: number,
   sorts?: ISortOrder[],
 }
+
+export function getEntityFieldValueInString<E extends Entity>( entity: E | undefined, field: keyof E ): string | undefined {
+  return entity ? entity[field] as string | undefined : undefined;
+}

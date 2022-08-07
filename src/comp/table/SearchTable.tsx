@@ -1,14 +1,15 @@
-import React, { createRef, RefObject } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { ColumnsType } from 'antd/lib/table/interface';
 
 import BaseTable from '../table/BaseTable';
 import { Entity, PageInfo } from '../model';
-import { Input, Spin } from 'antd';
+import { Input, InputRef, Spin } from 'antd';
 import { PageableRefDataProvider, RefId } from '../selector/interface';
 import Modal, { ModalProps } from 'antd/lib/modal/Modal';
 import { Column, Row } from 'simple-flexbox';
 import ControlPanel from './ControlPanel';
+import { useDebounce } from '../util';
 
 const {Search} = Input;
 
@@ -23,129 +24,97 @@ export interface ISearchTableProps<E extends Entity, ID extends RefId> extends O
   pageSize?: number,
 }
 
-interface ISearchTableState<E extends Entity> {
-  keyword?: string,
-  data: E[],
-  selected: E[],
-  pageInfo: PageInfo,
-  loading: boolean,
-}
+function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProps<E, ID>){
 
-export default class SearchTable<E extends Entity, ID extends RefId> extends React.Component<ISearchTableProps<E, ID>, ISearchTableState<E>> {
+  const [keyword, setKeyword] = useState(undefined as string | undefined);
+  const [data, setData] = useState([] as E[]);
+  const [selected, setSelected] = useState([] as E[]);
+  const [pageInfo, setPageInfo] = useState({current: 0, pageSize: props.pageSize || 25, total: 0} as PageInfo)
+  const [loading, setLoading] = useState(false);
 
-  constructor(props: ISearchTableProps<E, ID>){
-    super(props);
-    this.state = {
-      keyword: this.props.keyword,
-      data: [],
-      selected: [],
-      pageInfo: {current: 0, pageSize: this.props.pageSize || 25, total: 0},
-      loading: false,
-    }
+  const keywordInputRef = useRef<InputRef>(null);
 
-    this._handleSearch = this._handleSearch.bind(this);
-    this._handleKeywordChange = this._handleKeywordChange.bind(this);
-    this._handleSelect = this._handleSelect.bind(this);
-    this._handleOk = this._handleOk.bind(this);
-    this._doSearch = this._doSearch.bind(this);
-  }
+  const debouncedKeyword: string | undefined = useDebounce<string | undefined>(keyword, 500);
 
-  private refSearchInput: RefObject<Input> = createRef<Input>();
+  useEffect(() => {
+    doSearch(debouncedKeyword || "", pageInfo);
+  }, [debouncedKeyword]);
 
-  componentDidUpdate(prevProps: ISearchTableProps<E, ID>) {
-    if(this.props.visible && this.props.visible !== prevProps.visible) {
-        this.refSearchInput.current?.focus(); // focus only once after appear
-        this.setState({
-          keyword: this.props.keyword,
-          selected: [],   // clear select status
-        });
-        this._handleSearch(this.props.keyword); // do search
-    }
-  }
-
-  private _doSearch(keyword: string, pi: PageInfo): void {
-    this.setState({loading: true});
+  const doSearch = (keyword: string, pi: PageInfo): void => {
+    setLoading(true);
     (async () => {
-      let [data, pageInfo] = await this.props.onLoadData({keyword}, pi);
-      this.setState({data, pageInfo, loading: false});
+      let [data, pageInfo] = await props.onLoadData({keyword}, pi);
+      setData(data);
+      setPageInfo(pageInfo);
+      setLoading(false);
     })();
   }
 
-  private _handleSearch(keyword?: string): void {
-    this._doSearch(keyword || '', this.state.pageInfo);
+  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setKeyword(event.currentTarget.value);
   }
 
-  private _handleKeywordChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    this.setState({keyword: event.currentTarget.value})
+  const handleOk = (event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+    if(props.onOk)
+      props.onOk(selected);
   }
 
-  private _handleSelect(selected: E[]): void {
-    this.setState({selected});
-    if(this.props.onSelect)
-      this.props.onSelect(selected);
+  const handleSelect = (selected: E[]): void => {
+    setSelected(selected);
+    if(props.onSelect)
+      props.onSelect(selected);
   }
 
-  private _handleOk(event: React.MouseEvent<HTMLElement, MouseEvent>): void {
-    if(this.props.onOk)
-      this.props.onOk(this.state.selected);
+  /* 翻页 */
+  const handlePageChange = (current: number, pageSize?: number): void => {
+    doSearch(keyword || "", {...pageInfo, pageSize, current});
   }
 
-  render(){
-    const dataTable = <BaseTable<E>
-      columns={this.props.columns}
-      data={this.state.data}
-      keyField={this.props.keyField}
-      multiSelect={this.props.multiSelect}
-      onRowSelected={this._handleSelect}
-    />;
-    
-    return (      
-      <Modal
-        {...this.props}
-        title={
-          <Search
-            ref={this.refSearchInput}
-            addonBefore="关键字:"
-            onSearch={(keyword) => {this._doSearch(keyword || '', this.state.pageInfo);}}
-            value={this.state.keyword || ""}
-            onChange={this._handleKeywordChange}
-            style={{paddingRight: 100}}
-          >
-          </Search>
-        }
-        onOk={this._handleOk}
-      >
-        <Spin size="default" delay={300} spinning={this.state.loading}>
-        <Column style={{height: "100%"}}>
-          <Row flex="0 0 auth">
-            <ControlPanel
-              page={{
-                status: this.state.pageInfo,
-                conf: {                          
-                  onPageChange: (current, pageSize) => {
-                    this._doSearch(this.state.keyword || '', {current, pageSize: this.props.pageSize || 25});
-                  },
-                  showTotal: (t => `共${t}条`),
-                  size: "small",
-                  showLessItems: true,
-                  responsive: true,
-                }
-              }}
-            />
-          </Row>
-          <Row flex="1 1 auto">
-            <BaseTable<E>
-              columns={this.props.columns}
-              data={this.state.data}
-              keyField={this.props.keyField}
-              multiSelect={this.props.multiSelect}
-              onRowSelected={this._handleSelect}
-            />
-          </Row>
-        </Column>
-        </Spin>
-      </Modal>
-    );
-  }
+  return (      
+    <Modal
+      {...props}
+      title={
+        <Search
+          ref={keywordInputRef}
+          addonBefore="关键字:"
+          onSearch={(keyword) => {doSearch(keyword || '', pageInfo);}}
+          value={keyword}
+          onChange={handleKeywordChange}
+          style={{paddingRight: 100}}
+        />
+      }
+      onOk={handleOk}
+    >
+      <Spin size="default" delay={300} spinning={loading}>
+      <Column style={{height: "100%"}}>
+        <Row flex="0 0 auth">
+          <ControlPanel
+            page={{
+              status: pageInfo,
+              conf: {                          
+                showTotal: (t => `共${t}条`),
+                size: "small",
+                showLessItems: true,
+                responsive: true,
+                onPageChange: handlePageChange
+              }
+            }}
+          />
+        </Row>
+        <Row flex="1 1 auto">
+          <BaseTable<E>
+            columns={props.columns}
+            data={data}
+            keyField={props.keyField}
+            multiSelect={props.multiSelect}
+            onRowSelected={handleSelect}
+          />
+        </Row>
+      </Column>
+      </Spin>
+    </Modal>
+  );
 
 }
+
+export default SearchTable;

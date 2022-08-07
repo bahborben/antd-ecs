@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Form, Row, Col, Button, Space, DividerProps, Divider } from 'antd';
 import { Data, Entity } from '../model';
-import { FormInstance, FormItemProps, FormProps } from 'antd/lib/form';
+import { FormItemProps, FormProps } from 'antd/lib/form';
 import { EditorType } from '../editor/editors';
 import { Store } from 'antd/lib/form/interface';
 
@@ -131,42 +131,37 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
   return rows;
 }
 
-export default class BaseForm<E extends Entity | Data> extends React.Component<IBaseFormProps<E>> {
+function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
 
-  private formRef = React.createRef<FormInstance>();
-
-  constructor(props: IBaseFormProps<E>){
-    super(props);
-    this._handleSubmit = this._handleSubmit.bind(this);    
-  }
+  const [formRef] = Form.useForm();
 
 
-  private _handleSubmit(values: Store){
-    if(this.props.onSubmit)
-      this.props.onSubmit(values as E);
+  const handleSubmit = (values: Store) => {
+    if(props.onSubmit)
+      props.onSubmit(values as E);
   }
   
-  render(){
-    let {data, items, cols} = this.props
-    let rows: ReactNode[] = getLayout(items, cols);
-    return(
-      <Form
-        {...this.props}
-        ref={this.formRef}
-        initialValues={data}
-        onFinish={this._handleSubmit}
-      >
-        {rows}
-        {
-          <Row align="middle" gutter={8} justify="end">
-            <Space>
-              {undefined === this.props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{this.props.submitTitle || "Submit"}</Button>}
-              {undefined === this.props.onCancel ? undefined : <Button onClick={e => (this.props.onCancel as () => void)()}>{this.props.cancelTitle || "Cancel"}</Button>}
-              {this.props.allowReset ? <Button onClick={e => this.formRef.current?.resetFields()}>{this.props.resetTitle || "Reset"}</Button> : undefined}
-            </Space>
-          </Row>
-        }
-      </Form>
-    );
-  }
+  let {data, items, cols} = props
+  let rows: ReactNode[] = getLayout(items, cols);
+  return(
+    <Form
+      {...props}
+      form={formRef}
+      initialValues={data}
+      onFinish={handleSubmit}
+    >
+      {rows}
+      {
+        <Row align="middle" gutter={8} justify="end">
+          <Space>
+            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || "Submit"}</Button>}
+            {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || "Cancel"}</Button>}
+            {props.allowReset ? <Button onClick={e => formRef.resetFields()}>{props.resetTitle || "Reset"}</Button> : undefined}
+          </Space>
+        </Row>
+      }
+    </Form>
+  );
 }
+
+export default BaseForm;

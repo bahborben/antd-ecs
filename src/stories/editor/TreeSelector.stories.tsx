@@ -11,7 +11,7 @@ export default {
 } as Meta;
 
 const cat: Entity[] = [
-  {code: "02", name: "Philosophy & religion", index: "B", parent: null},
+  {code: "02", name: "Philosophy & religion", index: "B", parent: undefined},
   {code: "0201", name: "Philosophical theory", index: "B0", parent: "02"},
   {code: "04", name: "Politics & law", index: "D"},
   {code: "0401", name: "Political theory", index: "D0", parent: "04"},

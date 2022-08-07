@@ -1,9 +1,9 @@
-import React, { Component, ReactElement } from "react";
+import React, { ReactElement } from "react";
 import {Input, Checkbox, InputNumber, Switch, DatePicker, Button} from 'antd';
 import { InputProps } from "antd/lib/input";
 import { TextAreaProps } from 'antd/lib/input/TextArea';
 import { InputNumberProps } from "antd/lib/input-number";
-import { CheckboxChangeEvent, CheckboxProps } from 'antd/lib/checkbox';
+import { CheckboxProps } from 'antd/lib/checkbox';
 import { SwitchProps} from 'antd/lib/switch';
 import { PickerProps } from 'antd/lib/date-picker/generatePicker';
 import { Moment } from 'moment';
