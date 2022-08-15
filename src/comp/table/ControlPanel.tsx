@@ -17,7 +17,7 @@ export interface IControlPanelProp<QC extends Data>{
     status: PageInfo,
     conf: IPagination,
   },
-  filters?: PropsWithChildren<IBaseFormProps<QC>>,
+  filters?: IBaseFormProps<QC>,
 }
 
 function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
