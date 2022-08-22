@@ -16,8 +16,19 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
   const [selectedKeys, setSelectedKeys] = useState([] as string[]);
 
   useEffect(() => {
-    
+    // clear selection after data change
+    setSelectedKeys([]);
   }, [props.data])
+
+  useEffect(() => {
+    let rows: E[] = props.data.filter((data) => {
+      let dk: string | undefined = getEntityFieldValueInString(data, props.keyField || "");
+      return dk && selectedKeys.includes(dk);
+    });
+    if(props.onRowSelected){
+      props.onRowSelected(rows, selectedKeys);
+    }
+  }, [selectedKeys]);
   
   const _toggleRowSelection = (rec: E): void => {
     let key: string | undefined = getEntityFieldValueInString(rec, props.keyField || "");
@@ -34,13 +45,6 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
       } else{
         setSelectedKeys([...selectedKeys, key]);
       }
-    }
-    if(props.onRowSelected){
-      let rows: E[] = props.data.filter((data) => {
-        let dk: string | undefined = getEntityFieldValueInString(data, props.keyField || "");
-        return dk && selectedKeys.includes(dk);
-      });
-      props.onRowSelected(rows, selectedKeys);
     }
   }
 
@@ -70,8 +74,6 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
         let sk: React.Key | undefined = keys.find(x => !selectedKeys.includes(x as string));
         sks = sk ? [sk] : [];
       }
-      if(props.onRowSelected)
-        props.onRowSelected(rows, sks);
       setSelectedKeys(sks as string[]);
     },
     selectedRowKeys: selectedKeys,
