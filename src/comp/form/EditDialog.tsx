@@ -49,6 +49,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
     >
       <Form
         form={formRef}
+        preserve={false}  // clear data after modal destroyed
         className="base-form"
         labelAlign="right"
         initialValues={data}
