@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { Form, Modal } from 'antd';
 import { Entity } from '../model';
 import { IBaseFormProps, getLayout } from './BaseForm';
@@ -16,6 +16,10 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
 
   const [formRef] = Form.useForm();
 
+  useEffect(()=> {
+    formRef.setFieldsValue({...props.data});
+  }, [props.data]);
+
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     formRef.validateFields().then(values => {
       formRef.resetFields();
@@ -32,8 +36,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
   }
   
   let {
-    visible, title, okTitle, cancelTitle, 
-    data, items, cols, validateMessages
+    visible, title, okTitle, cancelTitle, items, cols, validateMessages
   } = props
   let rows: ReactNode[] = getLayout(items, cols);
   return(
@@ -52,7 +55,6 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
         preserve={false}  // clear data after modal destroyed
         className="base-form"
         labelAlign="right"
-        initialValues={data}
         validateMessages={validateMessages}
         scrollToFirstError={true} >
         {rows}
