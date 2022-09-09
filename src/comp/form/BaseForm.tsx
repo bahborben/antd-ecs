@@ -133,7 +133,8 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
 
 function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
 
-  const [formRef] = Form.useForm();
+  const [formInstance] = Form.useForm();
+  const formRef = props.form ? props.form : formInstance;
 
 
   const handleSubmit = (values: Store) => {
