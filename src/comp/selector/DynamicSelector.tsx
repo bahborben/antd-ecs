@@ -46,9 +46,7 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
   }
 
   const handleSearch = async (value: string) => {
-    let id = getCurrentValue();
-    let condition: IRefQueryCondition<ID> = {
-      refIds: id ? [id] : [],
+    let condition: IRefQueryCondition<ID> = {      
       keyword: value
     };
     let data: E[] = await props.onLoadData(condition);
