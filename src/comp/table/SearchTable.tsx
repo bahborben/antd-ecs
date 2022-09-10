@@ -37,6 +37,10 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
   const debouncedKeyword: string | undefined = useDebounce<string | undefined>(keyword, 500);
 
   useEffect(() => {
+    setKeyword(props.keyword);
+  }, [props.keyword]);
+
+  useEffect(() => {
     doSearch(debouncedKeyword || "", pageInfo);
   }, [debouncedKeyword]);
 
@@ -77,7 +81,7 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
         <Search
           ref={keywordInputRef}
           addonBefore="关键字:"
-          onSearch={(keyword) => {doSearch(keyword || '', pageInfo);}}
+          onSearch={(value) => {doSearch(value || '', pageInfo);}}
           value={keyword}
           onChange={handleKeywordChange}
           style={{paddingRight: 100}}
