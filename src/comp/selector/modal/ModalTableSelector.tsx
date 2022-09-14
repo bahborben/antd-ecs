@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from 'antd';
-import { Entity } from '../../model';
+import { Entity, getEntityFieldValueInString } from '../../model';
 import { IRefQueryCondition, RefId } from '../interface';
 import SearchTable, { ISearchTableProps } from '../../table/SearchTable';
 
@@ -20,20 +20,27 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   const [keyword, setKeyword] = useState(undefined as string | undefined);
 
   useEffect(() => {
-    /** load data if value is offered */
-    let currValue: string | undefined = props.value;
-    if(currValue !== undefined){
-      (async () => {
-        let condition: IRefQueryCondition<ID> = {
-          refIds: [currValue as ID]
-        };
-        let [data, _] = await props.onLoadData(condition, {current: 0, pageSize: props.pageSize || 25, total: 0});
-        if(data && data.length > 0) {
-          setSelectedData(data[0]);          
-        }
-      })();
+    loadByValue(props.value);
+  }, [props.value]);
+
+  const loadByValue = (value: string | undefined): void =>  {
+    if(value === undefined){  // clear data if value is undefined
+      setSelectedData(undefined);
+      return;
     }
-  }, []);
+    let currValue: ID = getEntityFieldValueInString(selectedData, props.valueField) as ID;
+    if(value === currValue) // do not response when the specific value is the same with current selection
+      return;
+    (async () => {  // do load
+      let condition: IRefQueryCondition<ID> = {
+        refIds: [value as ID]
+      };
+      let [data, _] = await props.onLoadData(condition, {current: 0, pageSize: props.pageSize || 25, total: 0});
+      if(data && data.length > 0) {
+        setSelectedData(data[0]);          
+      }
+    })();
+  }
 
   const handleSearch = (value: string): void => {
     setShowTable(true);
