@@ -11,6 +11,7 @@ export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> ex
   onChange?: (value: ID, record: E) => void,
   valueField: keyof E,
   titleRender: (data: E | undefined) => string,
+  allowClear?: boolean,
 }
 
 function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTableSelectorProps<E, ID>){
@@ -43,8 +44,13 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   }
 
   const handleSearch = (value: string): void => {
-    setShowTable(true);
-    setKeyword(value);
+    if(value === undefined || value === ""){
+      setKeyword(value);
+      setSelectedData(undefined);
+    } else {
+      setKeyword(value.trim());
+      setShowTable(true);
+    } 
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -69,6 +75,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
         onSearch={handleSearch}
         value={keyword || props.titleRender(selectedData)}
         onChange={handleChange}
+        allowClear={props.allowClear}
       />
       <SearchTable<E, ID>
         {...props}
