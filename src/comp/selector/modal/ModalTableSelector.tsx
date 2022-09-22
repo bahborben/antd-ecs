@@ -8,7 +8,7 @@ const {Search} = Input;
 
 export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> extends Omit<ISearchTableProps<E, ID>, "visible"> {
   value?: string,
-  onChange?: (value: ID, record: E) => void,
+  onChange?: (value: ID, record: E | undefined) => void,
   valueField: keyof E,
   titleRender: (data: E | undefined) => string,
   allowClear?: boolean,
@@ -54,7 +54,14 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setKeyword(event.currentTarget.value);    
+    let v = event.currentTarget.value;
+    if(v === undefined || v === ""){
+      // clear value if keyword is empty
+      setSelectedData(undefined);
+      if(props.onChange)
+        props.onChange("" as ID, undefined);
+    }
+    setKeyword(v);
   }
 
   const handleSelect = (selected: E[]): void => {
