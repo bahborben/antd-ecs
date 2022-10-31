@@ -12,7 +12,8 @@ export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> exten
   value?: ID,
   idField: string,
   optionRender: (record: E) => ReactNode,
-  onChange?: (value: ID, record?: E) => void
+  onChange?: (value: ID, record?: E) => void,
+  initializeCondition?: IRefQueryCondition<ID>
 }
 
 function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSelectorProps<E, ID>){
@@ -31,6 +32,12 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
           refIds: [currValue]
         };
         let data: E[] = await props.onLoadData(condition);
+        setData(data);        
+      })();
+    } else if(undefined !== props.initializeCondition) {
+      // if not specific current value, default query by initializeCondition
+      (async () => {
+        let data: E[] = await props.onLoadData(props.initializeCondition || {});
         setData(data);        
       })();
     }
