@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import {Input, Checkbox, InputNumber, Switch, DatePicker, Button} from 'antd';
+import {Input, Checkbox, InputNumber, Switch, DatePicker, Button, AutoCompleteProps, AutoComplete} from 'antd';
 import { InputProps } from "antd/lib/input";
 import { TextAreaProps } from 'antd/lib/input/TextArea';
 import { InputNumberProps } from "antd/lib/input-number";
@@ -42,6 +42,18 @@ export class ETInput implements EditorType<InputProps> {
 
   getEditor(): ReactElement<InputProps>{
     return <Input {...this.props} />
+  }
+}
+/********** 自动补全 **********/
+export class ETAutoComplete implements EditorType<AutoCompleteProps> {
+  props: AutoCompleteProps;
+
+  constructor(props: AutoCompleteProps){
+    this.props = props;
+  }
+
+  getEditor(): ReactElement<AutoCompleteProps>{
+    return <AutoComplete {...this.props} />
   }
 }
 /********** 大文本 **********/
