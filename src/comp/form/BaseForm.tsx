@@ -1,9 +1,9 @@
 import React, { ReactNode } from 'react';
 import { Form, Row, Col, Button, Space, DividerProps, Divider } from 'antd';
-import { Data, Entity } from '../model';
 import { FormItemProps, FormProps } from 'antd/lib/form';
-import { EditorType } from '../editor/editors';
 import { Store } from 'antd/lib/form/interface';
+import { EditorType } from 'comp/editor';
+import { Data, Entity } from 'comp/model';
 
 export interface IBaseFormItemProps extends FormItemProps {
   key: string,
@@ -24,6 +24,7 @@ export interface IBaseFormProps<E extends (Entity | Data)> extends Omit<FormProp
   cancelTitle?: string,
   allowReset?: boolean,
   resetTitle?: string,
+  onReset?: () => void,
 }
 
 const getItem = (prop: IBaseFormItemProps): ReactNode => {
@@ -133,13 +134,21 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
 
 function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
 
-  const [formInstance] = Form.useForm();
+  const [formInstance] = Form.useForm<E>();
   const formRef = props.form ? props.form : formInstance;
-
 
   const handleSubmit = (values: Store) => {
     if(props.onSubmit)
       props.onSubmit(values as E);
+  }
+
+  const handleReset = () => {
+    if(props.onReset){
+      props.onReset();
+    } else {
+      let keys: string[] = props.items.map(x => x.key);
+      formRef.resetFields(keys);
+    }
   }
   
   let {data, items, cols} = props
@@ -147,8 +156,7 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
   return(
     <Form
       {...props}
-      form={formRef}
-      initialValues={data}
+      form={formRef}      
       onFinish={handleSubmit}
     >
       {rows}
@@ -157,7 +165,7 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
           <Space>
             {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || "Submit"}</Button>}
             {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || "Cancel"}</Button>}
-            {props.allowReset ? <Button onClick={e => formRef.resetFields()}>{props.resetTitle || "Reset"}</Button> : undefined}
+            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || "Reset"}</Button> : undefined}
           </Space>
         </Row>
       }
