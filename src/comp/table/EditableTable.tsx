@@ -5,7 +5,7 @@ import { SaveOutlined, EditOutlined, DeleteOutlined, UndoOutlined, ExclamationCi
 import { Entity, getEntityFieldValueInString } from '../model';
 import BaseTable, { IBaseTableProps } from './BaseTable';
 import { EditorType } from '../editor/editors';
-import i18n from "../../i18n/i18n";
+import i18n from "../i18n/i18n";
 
 /** 单元格编辑组件配置 */
 interface ITableCellEditorProps<R extends Entity> extends React.HTMLAttributes<HTMLElement> {

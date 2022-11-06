@@ -4,7 +4,7 @@ import { FormItemProps, FormProps } from 'antd/lib/form';
 import { Store } from 'antd/lib/form/interface';
 import { EditorType } from 'comp/editor';
 import { Data, Entity } from 'comp/model';
-import i18n from "../../i18n/i18n";
+import i18n from "../i18n/i18n";
 
 export interface IBaseFormItemProps extends FormItemProps {
   key: string,

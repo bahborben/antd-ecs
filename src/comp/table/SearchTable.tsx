@@ -10,7 +10,7 @@ import Modal, { ModalProps } from 'antd/lib/modal/Modal';
 import { Column, Row } from 'simple-flexbox';
 import ControlPanel from './ControlPanel';
 import { useDebounce } from '../util';
-import i18n from '../../i18n/i18n';
+import i18n from '../i18n/i18n';
 
 const {Search} = Input;
 

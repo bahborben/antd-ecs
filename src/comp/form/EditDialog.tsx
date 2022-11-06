@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect } from 'react';
 import { Form, Modal } from 'antd';
 import { Entity } from '../model';
 import { IBaseFormProps, getLayout } from './BaseForm';
-import i18n from "../../i18n/i18n";
+import i18n from "../i18n/i18n";
 
 export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E>, "onSubmit"> {
   visible: boolean,

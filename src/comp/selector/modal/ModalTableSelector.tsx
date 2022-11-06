@@ -3,7 +3,7 @@ import { Input } from 'antd';
 import { Entity, getEntityFieldValueInString } from '../../model';
 import { IRefQueryCondition, RefId } from '../interface';
 import SearchTable, { ISearchTableProps } from '../../table/SearchTable';
-import i18n from '../../../i18n/i18n';
+import i18n from '../../i18n/i18n';
 
 const {Search} = Input;
 

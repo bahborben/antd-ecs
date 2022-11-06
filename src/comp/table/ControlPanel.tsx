@@ -5,7 +5,7 @@ import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, PageInfo } from '../model';
 import BaseForm, { IBaseFormProps } from '../form/BaseForm';
-import i18n from '../../i18n/i18n';
+import i18n from '../i18n/i18n';
 
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
