@@ -3,6 +3,7 @@ import { Input } from 'antd';
 import { Entity, getEntityFieldValueInString } from '../../model';
 import { IRefQueryCondition, RefId } from '../interface';
 import SearchTable, { ISearchTableProps } from '../../table/SearchTable';
+import i18n from '../../../i18n/i18n';
 
 const {Search} = Input;
 
@@ -78,7 +79,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   return (
     <React.Fragment>
       <Search
-        placeholder="搜索关键字"
+        placeholder={i18n.t("selector.ModalTableSelector.keyword")}
         onSearch={handleSearch}
         value={keyword || props.titleRender(selectedData)}
         onChange={handleChange}

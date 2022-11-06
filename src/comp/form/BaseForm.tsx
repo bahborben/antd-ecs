@@ -4,6 +4,7 @@ import { FormItemProps, FormProps } from 'antd/lib/form';
 import { Store } from 'antd/lib/form/interface';
 import { EditorType } from 'comp/editor';
 import { Data, Entity } from 'comp/model';
+import i18n from "../../i18n/i18n";
 
 export interface IBaseFormItemProps extends FormItemProps {
   key: string,
@@ -163,9 +164,9 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
       {
         <Row align="middle" gutter={8} justify="end">
           <Space>
-            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || "提交"}</Button>}
-            {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || "取消"}</Button>}
-            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || "重置"}</Button> : undefined}
+            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || i18n.t("form.BaseForm.submit")}</Button>}
+            {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || i18n.t("form.BaseForm.cancel")}</Button>}
+            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || i18n.t("form.BaseForm.reset")}</Button> : undefined}
           </Space>
         </Row>
       }

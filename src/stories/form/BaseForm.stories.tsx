@@ -37,8 +37,6 @@ Basic.args = {
   items,
   cols: 2,
   onSubmit: (value) => console.debug("submit value:", value),
-  allowReset: true,
-  resetTitle: "重置",
-  submitTitle: "查询",
+  allowReset: true,  
 };
 

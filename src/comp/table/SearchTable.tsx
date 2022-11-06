@@ -10,6 +10,7 @@ import Modal, { ModalProps } from 'antd/lib/modal/Modal';
 import { Column, Row } from 'simple-flexbox';
 import ControlPanel from './ControlPanel';
 import { useDebounce } from '../util';
+import i18n from '../../i18n/i18n';
 
 const {Search} = Input;
 
@@ -80,7 +81,7 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
       title={
         <Search
           ref={keywordInputRef}
-          addonBefore="关键字:"
+          addonBefore={i18n.t("table.SearchTable.keyword")}
           onSearch={(value) => {doSearch(value || '', pageInfo);}}
           value={keyword}
           onChange={handleKeywordChange}
@@ -96,7 +97,7 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
             page={{
               status: pageInfo,
               conf: {                          
-                showTotal: (t => `共${t}条`),
+                showTotal: (count => `${i18n.t("table.SearchTable.summary", {count})}`),
                 size: "small",
                 showLessItems: true,
                 responsive: true,

@@ -1,10 +1,11 @@
-import React, { ReactElement,  PropsWithChildren, useState } from 'react';
+import React, { ReactElement,  useState } from 'react';
 import { Row, Column } from 'simple-flexbox';
-import { Card, Form, FormInstance, Pagination } from 'antd';
+import { Card, Pagination } from 'antd';
 import {SearchOutlined, UpCircleOutlined} from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, PageInfo } from '../model';
 import BaseForm, { IBaseFormProps } from '../form/BaseForm';
+import i18n from '../../i18n/i18n';
 
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
@@ -47,7 +48,7 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
           <Card>
             <BaseForm<QC>
               allowReset={true}
-              submitTitle="查询"
+              submitTitle={i18n.t("table.ControlPanel.search")}
               {...props.filters}
             />
           </Card>
