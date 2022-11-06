@@ -47,8 +47,7 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
           <Card>
             <BaseForm<QC>
               allowReset={true}
-              resetTitle="Reset"
-              submitTitle="Search"
+              submitTitle="查询"
               {...props.filters}
             />
           </Card>

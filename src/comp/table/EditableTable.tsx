@@ -28,7 +28,7 @@ function TableCellEditor<E extends Entity>(props: React.PropsWithChildren<ITable
           rules={[
             {
               required: true,
-              message: `Please Input !`,
+              message: `请输入 !`,
             },
           ]}
         >

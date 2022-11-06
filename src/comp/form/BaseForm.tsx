@@ -163,9 +163,9 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
       {
         <Row align="middle" gutter={8} justify="end">
           <Space>
-            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || "Submit"}</Button>}
-            {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || "Cancel"}</Button>}
-            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || "Reset"}</Button> : undefined}
+            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || "提交"}</Button>}
+            {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || "取消"}</Button>}
+            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || "重置"}</Button> : undefined}
           </Space>
         </Row>
       }
