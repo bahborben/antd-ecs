@@ -14,6 +14,7 @@ import DynamicSelector, { IDynamicSelectorProps } from '../selector/DynamicSelec
 import TreeSelector, { ITreeSelectorProps } from '../selector/TreeSelector';
 import ModalTableSelector, { IModalTableSelectorProps } from '../selector/modal/ModalTableSelector';
 import { ButtonProps } from "antd/lib/button";
+import CascadeSelector, { ICascadeSelectorProps } from "comp/selector/CascadeSelector";
 
 export interface EditorType<P> {
   props: P,
@@ -139,6 +140,18 @@ export class ETDynamicSelector<E extends Entity, ID extends RefId> implements Ed
 
   getEditor(): ReactElement<IDynamicSelectorProps<E, ID>> {
     return <DynamicSelector {...this.props} />
+  }
+}
+/********** 级联输入框 **********/
+export class ETCascadeSelector<E extends Entity, ID extends RefId> implements EditorType<ICascadeSelectorProps<E, ID>> {
+  props: ICascadeSelectorProps<E, ID>;
+
+  constructor(props: ICascadeSelectorProps<E, ID>){
+    this.props = props;
+  }
+
+  getEditor(): ReactElement<ICascadeSelectorProps<E, ID>>{
+    return <CascadeSelector {...this.props} />
   }
 }
 /********** 树形选择 **********/
