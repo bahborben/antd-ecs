@@ -14,7 +14,7 @@ import DynamicSelector, { IDynamicSelectorProps } from '../selector/DynamicSelec
 import TreeSelector, { ITreeSelectorProps } from '../selector/TreeSelector';
 import ModalTableSelector, { IModalTableSelectorProps } from '../selector/modal/ModalTableSelector';
 import { ButtonProps } from "antd/lib/button";
-import CascadeSelector, { ICascadeSelectorProps } from "comp/selector/CascadeSelector";
+import CascadeSelector, { ICascadeSelectorProps } from "../selector/CascadeSelector";
 
 export interface EditorType<P> {
   props: P,
