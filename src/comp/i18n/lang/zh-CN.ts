@@ -23,7 +23,7 @@ export default {
             EditableTable: {
                 confirmTitle: "请确认",
                 confirmDelete: "删除当前选择项目吗?",
-                opration: "操作",
+                operation: "操作",
             },
             SearchTable: {
                 keyword: "关键字",
