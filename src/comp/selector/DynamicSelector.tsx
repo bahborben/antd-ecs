@@ -9,7 +9,6 @@ const {Option} = Select;
 
 export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID>, 'onChange'> {
   onLoadData: RefDataProvider<E, ID>,
-  value?: ID,
   idField: string,
   optionRender: (record: E) => ReactNode,
   onChange?: (value: ID, record?: E) => void,
@@ -18,9 +17,9 @@ export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> exten
 
 function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSelectorProps<E, ID>){
 
-  const [data, setData] = useState([] as E[]);
-  const [selectedValue, setSelectedValue] = useState(undefined as ID | undefined);
-  const [keyword, setKeyword] = useState(undefined as string | undefined);
+  const [data, setData] = useState<E[]>([]);
+  const [selectedValue, setSelectedValue] = useState<ID | undefined>(undefined);
+  const [keyword, setKeyword] = useState<string | undefined>(undefined);
 
   const debouncedKeyword: string | undefined = useDebounce<string | undefined>(keyword, 500);
 
@@ -32,7 +31,7 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
           refIds: [currValue]
         };
         let data: E[] = await props.onLoadData(condition);
-        setData(data);        
+        setData(data); 
       })();
     } else if(undefined !== props.initializeCondition) {
       // if not specific current value, default query by initializeCondition

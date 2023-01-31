@@ -13,6 +13,7 @@ export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> ex
   valueField: keyof E,
   titleRender: (data: E | undefined) => string,
   allowClear?: boolean,
+  disabled?: boolean,
 }
 
 function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTableSelectorProps<E, ID>){
@@ -84,6 +85,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
         value={keyword || props.titleRender(selectedData)}
         onChange={handleChange}
         allowClear={props.allowClear}
+        disabled={props.disabled}
       />
       <SearchTable<E, ID>
         {...props}
