@@ -9,6 +9,7 @@ export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, '
   keyField: keyof E,
   multiSelect?: boolean,
   onRowSelected?: (records: E[], keys: React.Key[]) => void,
+  clearSelectionAfterDataChange?: boolean
 }
 
 function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
@@ -17,7 +18,15 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
 
   useEffect(() => {
     // clear selection after data change
-    setSelectedKeys([]);
+    if(props.clearSelectionAfterDataChange){
+      setSelectedKeys([]);
+    }else{
+      // 取交集
+      let intersection: string[] = props.data
+        .map(x => getEntityFieldValueInString(x, props.keyField) || "")
+        .filter(x => x && selectedKeys.includes(x));
+      setSelectedKeys(intersection);
+    }    
   }, [props.data])
 
   useEffect(() => {
@@ -49,17 +58,22 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
   }
 
   const _onRow = (data: E, index?: number): React.HTMLAttributes<HTMLElement> => {
+    let superOnRow = props.onRow === undefined ? undefined : props.onRow(data, index);
     return {
-      ...props.onRow,
+      ...superOnRow,
       onClick: (event) => {
+        // set row selection when row clicked
         if(index !== undefined){
           if((props.multiSelect && event.ctrlKey) || !props.multiSelect){
             _toggleRowSelection(data);
           } 
         }
-        if(props.onRow && 'onClick' in props.onRow) {
-          let oc: MouseEventHandler = props.onRow['onClick'];
-          oc(event);
+        // if any click event callback is defined, then execute it
+        if(superOnRow && 'onClick' in superOnRow) {
+          let oc: MouseEventHandler | undefined = superOnRow['onClick'];
+          if(oc){
+            oc(event);
+          }
         }
       }
     }
