@@ -89,6 +89,7 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
         />
       }
       onOk={handleOk}
+      destroyOnClose={true} // prevent to trigger onSelect again when search the same value as last searching
     >
       <Spin size="default" delay={300} spinning={loading}>
       <Column style={{height: "100%"}}>

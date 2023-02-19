@@ -46,13 +46,8 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   }
 
   const handleSearch = (value: string): void => {
-    if(value === undefined || value === ""){
-      setKeyword(value);
-      setSelectedData(undefined);
-    } else {
-      setKeyword(value.trim());
-      setShowTable(true);
-    } 
+    setKeyword(value.trim());
+    setShowTable(true);
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
