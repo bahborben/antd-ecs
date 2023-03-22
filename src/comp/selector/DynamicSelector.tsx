@@ -7,7 +7,7 @@ import { useDebounce } from '../util';
 
 const {Option} = Select;
 
-export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID>, 'onChange'> {
+export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, E>, "onChange"> {
   onLoadData: RefDataProvider<E, ID>,
   idField: string,
   optionRender: (record: E) => ReactNode,
@@ -20,6 +20,7 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
   const [data, setData] = useState<E[]>([]);
   const [selectedValue, setSelectedValue] = useState<ID | undefined>(undefined);
   const [keyword, setKeyword] = useState<string | undefined>(undefined);
+  const [lastSearch, setLastSearch] = useState<string>("");
 
   const debouncedKeyword: string | undefined = useDebounce<string | undefined>(keyword, 500);
 
@@ -52,6 +53,9 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
   }
 
   const handleSearch = async (value: string) => {
+    if(value.trim() === lastSearch.trim())
+      return;
+    setLastSearch(value);
     let condition: IRefQueryCondition<ID> = {      
       keyword: value
     };
@@ -75,7 +79,8 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
       showArrow={true}
       value={getCurrentValue()}
       onChange={handleChange}
-      onSearch={handleSearch}
+      onSearch={value => setKeyword(value)}
+      onClear={() => handleSearch("")}
       filterOption={false}
     >
       {
