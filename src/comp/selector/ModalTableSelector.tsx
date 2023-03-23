@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Input } from 'antd';
-import { Entity, getEntityFieldValueInString } from '../../model';
-import { IRefQueryCondition, RefId } from '../interface';
-import SearchTable, { ISearchTableProps } from '../../table/SearchTable';
-import i18n from '../../i18n/i18n';
+import { Entity, getEntityFieldValueInString } from '../model';
+import { IRefQueryCondition, RefId } from './interface';
+import SearchTable, { ISearchTableProps } from '../table/SearchTable';
+import i18n from '../i18n/i18n';
+import { useDebounce } from 'comp/util';
 
 const {Search} = Input;
 
@@ -14,17 +15,26 @@ export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> ex
   titleRender: (data: E | undefined) => string,
   allowClear?: boolean,
   disabled?: boolean,
+  autoShow?: boolean,
 }
 
 function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTableSelectorProps<E, ID>){
 
-  const [selectedData, setSelectedData] = useState(undefined as E | undefined);
+  const [selectedData, setSelectedData] = useState<E|undefined>(undefined);
   const [showTable, setShowTable] = useState(false);
-  const [keyword, setKeyword] = useState(undefined as string | undefined);
+  const [keyword, setKeyword] = useState<string>("");
+  const [inputLock, setInputLock] = useState(false);
+
+  const debouncedKeyword: string = useDebounce<string>(keyword, 500);
 
   useEffect(() => {
     loadByValue(props.value);
   }, [props.value]);
+
+  useEffect(() => {
+    if(debouncedKeyword.trim() !== "" && props.autoShow && !inputLock)
+      setShowTable(true);
+  }, [debouncedKeyword]);
 
   const loadByValue = (value: string | undefined): void =>  {
     if(value === undefined){  // clear data if value is undefined
@@ -66,9 +76,17 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
       let rec = selected[0];
       setSelectedData(rec);
       setShowTable(false);  // close table view
-      setKeyword(undefined);  // clear keyword in order to render content in Input
+      setKeyword("");  // clear keyword in order to render content in Input
       if(props.onChange)
         props.onChange((rec[props.valueField] || "") as ID, rec );
+    }
+  }
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>): void => {
+    if(showTable)
+      return;
+    if(!selectedData){
+      setKeyword("");
     }
   }
 
@@ -81,6 +99,9 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
         onChange={handleChange}
         allowClear={props.allowClear}
         disabled={props.disabled}
+        onBlur={handleBlur}
+        onCompositionStart={e => setInputLock(true)}
+        onCompositionEnd={e => setInputLock(false)}
       />
       <SearchTable<E, ID>
         {...props}

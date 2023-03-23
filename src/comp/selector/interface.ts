@@ -18,4 +18,4 @@ export declare type PageableRefDataProvider<E extends Entity, ID extends RefId> 
 export * from './StaticSelector';
 export * from './TreeSelector';
 export * from './DynamicSelector';
-export * from './modal/ModalTableSelector';
+export * from './ModalTableSelector';

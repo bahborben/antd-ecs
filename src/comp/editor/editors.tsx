@@ -12,7 +12,7 @@ import { RefId } from '../selector/interface';
 import StaticSelector, { IStaticSelectorProps } from '../selector/StaticSelector';
 import DynamicSelector, { IDynamicSelectorProps } from '../selector/DynamicSelector';
 import TreeSelector, { ITreeSelectorProps } from '../selector/TreeSelector';
-import ModalTableSelector, { IModalTableSelectorProps } from '../selector/modal/ModalTableSelector';
+import ModalTableSelector, { IModalTableSelectorProps } from '../selector/ModalTableSelector';
 import { ButtonProps } from "antd/lib/button";
 import CascadeSelector, { ICascadeSelectorProps } from "../selector/CascadeSelector";
 
