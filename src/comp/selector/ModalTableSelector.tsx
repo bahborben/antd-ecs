@@ -4,7 +4,8 @@ import { Entity, getEntityFieldValueInString } from '../model';
 import { IRefQueryCondition, RefId } from './interface';
 import SearchTable, { ISearchTableProps } from '../table/SearchTable';
 import i18n from '../i18n/i18n';
-import { useDebounce } from 'comp/util';
+import { useDebounce } from '../util';
+
 
 const {Search} = Input;
 
