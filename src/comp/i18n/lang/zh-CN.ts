@@ -14,6 +14,8 @@ export default {
         selector: {
             ModalTableSelector: {
                 keyword: "搜索关键字",
+                ok: "确定",
+                cancel: "取消",
             }
         },
         table: {

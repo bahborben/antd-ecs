@@ -14,6 +14,8 @@ export default {
         selector: {
             ModalTableSelector: {
                 keyword: "search keyword",
+                ok: "Ok",
+                cancel: "Cancel",
             }
         },
         table: {

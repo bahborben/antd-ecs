@@ -11,7 +11,7 @@ const {Search} = Input;
 
 export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> extends Omit<ISearchTableProps<E, ID>, "visible"> {
   value?: string,
-  onChange?: (value: ID, record: E | undefined) => void,
+  onChange?: (value: ID | undefined, record: E | undefined) => void,
   valueField: keyof E,
   titleRender: (data: E | undefined) => string,
   allowClear?: boolean,
@@ -33,9 +33,20 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   }, [props.value]);
 
   useEffect(() => {
-    if(debouncedKeyword.trim() !== "" && props.autoShow && !inputLock)
-      setShowTable(true);
+    if(debouncedKeyword !== "" && props.autoShow && !inputLock){
+      handleSearch(debouncedKeyword);
+    }
   }, [debouncedKeyword]);
+
+  useEffect(() => {
+    if(props.onChange){
+      if(selectedData){
+        props.onChange(selectedData[props.valueField] as ID|undefined , selectedData);
+      }else{
+        props.onChange(undefined , undefined);
+      }
+    }
+  }, [selectedData]);
 
   const loadByValue = (value: string | undefined): void =>  {
     if(value === undefined){  // clear data if value is undefined
@@ -57,19 +68,13 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   }
 
   const handleSearch = (value: string): void => {
-    setKeyword(value.trim());
+    setSelectedData(undefined);
     setShowTable(true);
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     let v = event.currentTarget.value;
-    if(v === undefined || v === ""){
-      // clear value if keyword is empty
-      setSelectedData(undefined);
-      if(props.onChange)
-        props.onChange("" as ID, undefined);
-    }
-    setKeyword(v);
+    setKeyword(v?.trim() || "");
   }
 
   const handleSelect = (selected: E[]): void => {
@@ -78,8 +83,6 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
       setSelectedData(rec);
       setShowTable(false);  // close table view
       setKeyword("");  // clear keyword in order to render content in Input
-      if(props.onChange)
-        props.onChange((rec[props.valueField] || "") as ID, rec );
     }
   }
 
@@ -114,6 +117,8 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
         onCancel={() => {setShowTable(false)}}
         visible={showTable}
         onSelect={handleSelect}
+        okText={i18n.t("selector.ModalTableSelector.ok")}
+        cancelText={i18n.t("selector.ModalTableSelector.cancel")}
       />
     </React.Fragment>
   );
