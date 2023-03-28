@@ -6,6 +6,7 @@ import i18n from "../i18n/i18n";
 
 export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E>, "onSubmit"> {
   visible: boolean,
+  clearAfterSubmit?: boolean,
   title: string,
   okTitle?: string,
   cancelTitle?: string,
@@ -23,7 +24,8 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     formRef.validateFields().then(values => {
-      formRef.resetFields();
+      if(props.clearAfterSubmit)
+        formRef.resetFields();
       if(props.onOk !== undefined)
         props.onOk(values as E);
     }).catch(info => {
