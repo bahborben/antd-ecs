@@ -76,7 +76,7 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
         </Column>
         {
           props.page ? (
-            <Column flex="0 0 25vw" vertical="center" horizontal="end">
+            <Column flex="0 0 auto" vertical="center" horizontal="end">
               {getPagination()}
             </Column>
           ) : null
