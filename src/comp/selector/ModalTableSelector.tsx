@@ -23,17 +23,17 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
 
   const [selectedData, setSelectedData] = useState<E|undefined>(undefined);
   const [showTable, setShowTable] = useState(false);
-  const [keyword, setKeyword] = useState<string>("");
+  const [keyword, setKeyword] = useState<string|undefined>(undefined);
   const [inputLock, setInputLock] = useState(false);
 
-  const debouncedKeyword: string = useDebounce<string>(keyword, 500);
+  const debouncedKeyword: string|undefined = useDebounce<string|undefined>(keyword, 500);
 
   useEffect(() => {
     loadByValue(props.value);
   }, [props.value]);
 
   useEffect(() => {
-    if(debouncedKeyword !== "" && props.autoShow && !inputLock){
+    if(debouncedKeyword && props.autoShow && !inputLock){
       handleSearch(debouncedKeyword);
     }
   }, [debouncedKeyword]);
@@ -82,7 +82,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
       let rec = selected[0];
       setSelectedData(rec);
       setShowTable(false);  // close table view
-      setKeyword("");  // clear keyword in order to render content in Input
+      setKeyword(undefined);  // clear keyword in order to render content in Input
     }
   }
 
@@ -99,7 +99,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
       <Search
         placeholder={i18n.t("selector.ModalTableSelector.keyword")}
         onSearch={handleSearch}
-        value={keyword || props.titleRender(selectedData)}
+        value={keyword === undefined ? props.titleRender(selectedData) : keyword}
         onChange={handleChange}
         allowClear={props.allowClear}
         disabled={props.disabled}
