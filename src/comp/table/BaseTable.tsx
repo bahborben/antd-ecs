@@ -9,7 +9,8 @@ export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, '
   keyField: keyof E,
   multiSelect?: boolean,
   onRowSelected?: (records: E[], keys: React.Key[]) => void,
-  clearSelectionAfterDataChange?: boolean
+  clearSelectionAfterDataChange?: boolean,
+  selectOptions?: TableRowSelection<E>
 }
 
 function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
@@ -80,6 +81,7 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
   }
 
   const rowSelection: TableRowSelection<E> = {
+    ...props?.selectOptions,
     type: (props.multiSelect) ? "checkbox" : "radio",
     onChange: (keys, rows) => {
       let sks: React.Key[] = keys;
