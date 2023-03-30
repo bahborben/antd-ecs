@@ -33,7 +33,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   }, [props.value]);
 
   useEffect(() => {
-    if(debouncedKeyword && props.autoShow && !inputLock){
+    if(debouncedKeyword !== undefined && props.autoShow && !inputLock){
       handleSearch(debouncedKeyword);
     }
   }, [debouncedKeyword]);
