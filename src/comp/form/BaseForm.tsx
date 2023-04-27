@@ -44,7 +44,7 @@ const getItem = (prop: IBaseFormItemProps): ReactNode => {
       {...prop}
       key={prop.key}
       label={prop.label}
-      name={prop.key}
+      name={prop.key.indexOf(".") >= 0 ? prop.key.split(".") : prop.key}
     >
       {prop.editor?.getEditor()}
     </Form.Item>
