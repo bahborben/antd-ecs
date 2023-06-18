@@ -2,9 +2,10 @@ import React, { ReactNode } from 'react';
 import { Form, Row, Col, Button, Space, DividerProps, Divider } from 'antd';
 import { FormItemProps, FormProps } from 'antd/lib/form';
 import { Store } from 'antd/lib/form/interface';
-import { EditorType } from 'comp/editor';
-import { Data, Entity } from 'comp/model';
-import i18n from "../i18n/i18n";
+import { EditorType } from '../editor';
+import { Data, Entity } from '../model';
+import i18n from '../i18n/i18n';
+
 
 export interface IBaseFormItemProps extends FormItemProps {
   key: string,
@@ -26,6 +27,7 @@ export interface IBaseFormProps<E extends (Entity | Data)> extends Omit<FormProp
   allowReset?: boolean,
   resetTitle?: string,
   onReset?: () => void,
+  extraOperations?: ReactNode[],
 }
 
 const getItem = (prop: IBaseFormItemProps): ReactNode => {
@@ -167,6 +169,7 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
             {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || i18n.t("form.BaseForm.submit")}</Button>}
             {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || i18n.t("form.BaseForm.cancel")}</Button>}
             {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || i18n.t("form.BaseForm.reset")}</Button> : undefined}
+		        {props.extraOperations && props.extraOperations.length ? props.extraOperations : undefined}
           </Space>
         </Row>
       }

@@ -21,6 +21,8 @@ export default {
         table: {
             ControlPanel: {
                 search: "查询",
+                more: "更多",
+                back: "返回",
             },
             EditableTable: {
                 confirmTitle: "请确认",

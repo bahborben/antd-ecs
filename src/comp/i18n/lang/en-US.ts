@@ -21,6 +21,8 @@ export default {
         table: {
             ControlPanel: {
                 search: "Search",
+                more: "More",
+                back: "Back",
             },
             EditableTable: {
                 confirmTitle: "Confirm",
