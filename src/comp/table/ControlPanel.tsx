@@ -130,13 +130,13 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
   }
 
   return (
-    <React.Fragment>
+    <Card>
       <Collapse activeKey="ctrl" >
         <Collapse.Panel header={getHeader()} key="ctrl" collapsible='disabled' showArrow={false} >
           {createFilterForm()}
         </Collapse.Panel>
       </Collapse>      
-    </React.Fragment>
+    </Card>
   );
 }
 
