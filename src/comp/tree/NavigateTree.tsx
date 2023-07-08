@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { Input } from 'antd';
-import {Row, Column} from 'simple-flexbox';
+import { Input, Row, Col } from 'antd';
 import { Entity } from '../model';
 import BaseTree, { IBaseTreeProps } from './BaseTree';
 import { useDebounce } from '../util';
@@ -29,7 +28,7 @@ function NavigateTree<E extends Entity>(props: React.PropsWithChildren<INavigate
   const createSearchPanel = (): ReactNode | undefined => {
     if(props.searchable){
       return (
-        <Row flex="0 0 auto">
+        <Row>
           <Input.Search onSearch={handleSearch} onChange={e => setKeyword(e.currentTarget.value)}></Input.Search>
         </Row>
       );
@@ -69,15 +68,15 @@ function NavigateTree<E extends Entity>(props: React.PropsWithChildren<INavigate
   }
 
   return (
-    <Column style={{height:"100%", width:"100%"}}>
+    <Col>
       {createSearchPanel()}
-      <Row flex="1 1 auto">
+      <Row>
         <BaseTree 
           {...props}
           expandedKeys={expandedKeys}
         />
       </Row>
-    </Column>
+    </Col>
   );
 }
 

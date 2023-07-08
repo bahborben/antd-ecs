@@ -6,7 +6,8 @@ import { InputNumberProps } from "antd/lib/input-number";
 import { CheckboxProps } from 'antd/lib/checkbox';
 import { SwitchProps} from 'antd/lib/switch';
 import { PickerProps } from 'antd/lib/date-picker/generatePicker';
-import { Moment } from 'moment';
+// import { Moment } from 'moment';
+import { Dayjs } from 'dayjs'
 import { Entity } from '../model';
 import { RefId } from '../selector/interface';
 import StaticSelector, { IStaticSelectorProps } from '../selector/StaticSelector';
@@ -106,15 +107,15 @@ export class ETInputNumber implements EditorType<InputNumberProps> {
   }
 }
 /********** 日期选择器 **********/
-export class ETDatePicker implements EditorType<PickerProps<Moment>> {
+export class ETDatePicker implements EditorType<PickerProps<Dayjs>> {
   
-  props: PickerProps<Moment>;
+  props: PickerProps<Dayjs>;
 
-  constructor(props: PickerProps<Moment>){
+  constructor(props: PickerProps<Dayjs>){
     this.props = props;
   }
 
-  getEditor(): ReactElement<PickerProps<Moment>>{
+  getEditor(): ReactElement<PickerProps<Dayjs>>{
     return <DatePicker {...this.props} />
   }
 }

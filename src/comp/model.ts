@@ -1,11 +1,10 @@
-import { isDate, isMoment, Moment } from 'moment';
+import { Dayjs, isDayjs } from 'dayjs';
 
-export declare type Value = string | number | boolean | Moment | Date | undefined;
+export declare type Value = string | number | boolean | Dayjs | undefined;
 
 export function isEntityValue(val: any): val is Value{
   return val === undefined
-    || isMoment(val)
-    || isDate(val)
+    || isDayjs(val)
     || ["string", "number", "boolean"].includes(typeof val);
 }
 

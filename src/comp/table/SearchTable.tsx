@@ -4,10 +4,8 @@ import { ColumnsType } from 'antd/lib/table/interface';
 
 import BaseTable from '../table/BaseTable';
 import { Entity, PageInfo } from '../model';
-import { Input, InputRef, Spin } from 'antd';
+import { Input, InputRef, Spin, Modal, ModalProps, Col, Row, Card } from 'antd';
 import { PageableRefDataProvider, RefId } from '../selector/interface';
-import Modal, { ModalProps } from 'antd/lib/modal/Modal';
-import { Column, Row } from 'simple-flexbox';
 import ControlPanel from './ControlPanel';
 import { useDebounce } from '../util';
 import i18n from '../i18n/i18n';
@@ -92,31 +90,33 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
       destroyOnClose={true} // prevent to trigger onSelect again when search the same value as last searching
     >
       <Spin size="default" delay={300} spinning={loading}>
-      <Column style={{height: "100%"}}>
-        <Row flex="0 0 auth">
-          <ControlPanel
-            page={{
-              status: pageInfo,
-              conf: {                          
-                showTotal: (count => `${i18n.t("table.SearchTable.summary", {count})}`),
-                size: "small",
-                showLessItems: true,
-                responsive: true,
-                onPageChange: handlePageChange
-              }
-            }}
-          />
-        </Row>
-        <Row flex="1 1 auto">
-          <BaseTable<E>
-            columns={props.columns}
-            data={data}
-            keyField={props.keyField}
-            multiSelect={props.multiSelect}
-            onRowSelected={handleSelect}
-          />
-        </Row>
-      </Column>
+        <Col>
+          <Row>
+            <ControlPanel
+              page={{
+                status: pageInfo,
+                conf: {                          
+                  showTotal: (count => `${i18n.t("table.SearchTable.summary", {count})}`),
+                  size: "small",
+                  showLessItems: true,
+                  responsive: true,
+                  onPageChange: handlePageChange
+                }
+              }}
+            />
+          </Row>
+          <Row>
+            <Card>
+              <BaseTable<E>
+                columns={props.columns}
+                data={data}
+                keyField={props.keyField}
+                multiSelect={props.multiSelect}
+                onRowSelected={handleSelect}
+              />
+            </Card>
+          </Row>
+        </Col>
       </Spin>
     </Modal>
   );
