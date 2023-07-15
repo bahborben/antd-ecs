@@ -1,6 +1,6 @@
 import { Dayjs, isDayjs } from 'dayjs';
 
-export declare type Value = string | number | boolean | Dayjs | undefined;
+export declare type Value = string | number | boolean | Dayjs | Date | undefined;
 
 export function isEntityValue(val: any): val is Value{
   return val === undefined

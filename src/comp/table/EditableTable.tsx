@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Col, Modal, Space } from 'antd';
+import { Form, Button, Modal, Space } from 'antd';
 import { ColumnType, ColumnsType } from 'antd/lib/table/interface';
 import { SaveOutlined, EditOutlined, DeleteOutlined, UndoOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Entity, getEntityFieldValueInString } from '../model';
