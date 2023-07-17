@@ -49,16 +49,6 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
 
   const getHeader = (): ReactNode => {
     return <Row align="middle" justify="center" gutter={10}>
-      <Col flex="1 1 auto">
-        {props.operations}
-      </Col>
-      {
-        props.page ? (
-          <Col flex="0 0 auto">
-            {getPagination()}
-          </Col>
-        ) : undefined
-      }
       {
         props.filters ? (
           <Col flex="0 0 auto">
@@ -68,6 +58,16 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
                 setCommonFilterMode(getCommonFilterItems().length === 0 ? false : true);
               }} />
             </Space>
+          </Col>
+        ) : undefined
+      }
+      <Col flex="1 1 auto">
+        {props.operations}
+      </Col>
+      {
+        props.page ? (
+          <Col flex="0 0 auto">
+            {getPagination()}
           </Col>
         ) : undefined
       }

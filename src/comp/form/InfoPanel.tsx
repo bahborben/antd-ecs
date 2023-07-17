@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { Descriptions } from 'antd';
 import { DescriptionsProps } from 'antd/lib/descriptions';
 import { Entity } from '../model';
+import get from 'lodash/get';
 
 export interface IInfoPanelItem<E extends Entity> {
   label: string,
@@ -20,7 +21,7 @@ function InfoPanel<E extends Entity>(props: React.PropsWithChildren<IInfoPanelPr
   const createDescriptionItems = (data: E, items: IInfoPanelItem<E>[]) => {
     return items.map(x => (
       <Descriptions.Item label={x.label} span={x.span || 1}>
-        {x.render ? x.render(data) : (data[x.dataIndex] as string)}
+        {x.render ? x.render(data) : get(data, x.dataIndex, "") as string}
       </Descriptions.Item>
     ));
   }
