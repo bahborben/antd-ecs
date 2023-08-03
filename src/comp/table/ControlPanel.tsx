@@ -1,10 +1,13 @@
 import React, { ReactElement,  ReactNode,  useEffect,  useState } from 'react';
 import { Button, Card, Col, Collapse, Pagination, Row, Space, Tabs } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined,SettingOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
-import { Data, PageInfo } from '../model';
+import { Data, Entity, PageInfo } from '../model';
 import BaseForm, { IBaseFormItemProps, IBaseFormProps } from '../form/BaseForm';
 import i18n from '../i18n/i18n';
+import { ITableColumnConfig, TableColumnConfigReader, TableColumnConfigWritter, applyTableColumnConfig, localStorageConfigReader } from './BaseTable';
+import { ColumnType } from 'antd/lib/table/interface';
+import TableConfDialog from './TableConfDialog';
 
 const {TabPane} = Tabs;
 
@@ -12,7 +15,7 @@ export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pa
   onPageChange: (page: number, pageSize?: number) => void,
 }
 
-export interface IControlPanelProp<QC extends Data>{
+export interface IControlPanelProp<QC extends Data, COL extends Entity>{
   operations?: ReactElement<any>,
   page?: {
     status: PageInfo,
@@ -20,15 +23,38 @@ export interface IControlPanelProp<QC extends Data>{
   },
   filters?: IBaseFormProps<QC>,
   commonFilterKeys?: string[],
+  config?: {
+    id: string,
+    cols: ColumnType<COL>[],
+    reader?: TableColumnConfigReader,
+    writter?: TableColumnConfigWritter,
+    onLoad?: (columns: ColumnType<COL>[]) => void,
+    onChange?: (columns: ColumnType<COL>[]) => void,
+  }
 }
 
-function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
+function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelProp<QC, COL>) {
 
   const [showFilterForm, setShowFilterForm] = useState(false);
   const [commonFilterMode, setCommonFilterMode] = useState(true);
+  const [columnConfig, setColumnConfig] = useState([] as ITableColumnConfig[]);
 
   useEffect(() => {
     setShowFilterForm(getCommonFilterItems().length > 0 ? true : false);
+    // load column config
+    if(props.config?.id){
+      let cid = props.config?.id;
+      let conf: ITableColumnConfig[] = [];
+      if(props.config?.reader){
+          conf = props.config.reader(cid, props.config.cols);
+      } else {
+          conf = localStorageConfigReader(cid, props.config.cols);
+      }
+      setColumnConfig(conf);
+      if(props.config?.onLoad){
+        props.config.onLoad(applyTableColumnConfig(props.config.cols, conf));
+      }
+    }
   }, []);
 
   const handlePageChange = (page: number, pageSize?: number) => {
@@ -68,6 +94,17 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
         props.page ? (
           <Col flex="0 0 auto">
             {getPagination()}
+          </Col>
+        ) : undefined
+      }
+      {
+        props.config?.id ? (
+          <Col flex="0 0 auto">
+            <Space>
+              <Button type="primary" shape="circle" icon={<SettingOutlined />} onClick={e => {
+                
+              }} />
+            </Space>
           </Col>
         ) : undefined
       }
@@ -129,14 +166,30 @@ function ControlPanel<QC extends Data>(props: IControlPanelProp<QC>) {
     );
   }
 
+  const handleConfigChange = (config: ITableColumnConfig[]) => {
+    setColumnConfig(config);
+    if(props.config?.id && props.config?.writter){
+        props.config.writter(props.config.id, config);
+    }
+    if(props.config?.onChange){
+        props.config.onChange(applyTableColumnConfig(props.config.cols, config));
+    }
+  }
+
   return (
-    <Card>
-      <Collapse activeKey="ctrl" >
-        <Collapse.Panel header={getHeader()} key="ctrl" collapsible='disabled' showArrow={false} >
-          {createFilterForm()}
-        </Collapse.Panel>
-      </Collapse>      
-    </Card>
+    <React.Fragment>
+        <Card>
+            <Collapse activeKey="ctrl" >
+                <Collapse.Panel header={getHeader()} key="ctrl" collapsible='disabled' showArrow={false} >
+                {createFilterForm()}
+                </Collapse.Panel>
+            </Collapse>
+        </Card>
+        <TableConfDialog
+            columnConfig={columnConfig}
+            onConfigChange={handleConfigChange}
+        />
+    </React.Fragment>
   );
 }
 

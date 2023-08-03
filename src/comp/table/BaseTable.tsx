@@ -1,16 +1,94 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { Checkbox, Radio, Table, TableProps } from 'antd';
-import { TableRowSelection } from 'antd/lib/table/interface';
+import { ColumnType, TableRowSelection } from 'antd/lib/table/interface';
 
 import { Entity, getEntityFieldValueInString } from '../model';
 
+export interface ITableColumnConfig {
+  id: string,
+  label: string,
+  visible: boolean,
+  width: number,
+  order?: number,
+}
+
+export type TableColumnConfigReader = (configId: string, cols?: ColumnType<any>[]) => ITableColumnConfig[];
+export const localStorageConfigReader: TableColumnConfigReader = (configId: string, cols?: ColumnType<any>[]) => {
+    let confJson: string | null = localStorage.getItem(configId);
+    let conf: ITableColumnConfig[] = [];
+    if(null !== confJson){
+        conf = JSON.parse(confJson);
+    }
+    return cols === undefined ? conf : mergeTableColumnConfig(cols, conf);
+}
+
+export type TableColumnConfigWritter = (configId: string, data: ITableColumnConfig[]) => void;
+export const localStorageConfigWritter: TableColumnConfigWritter = (configId: string, data: ITableColumnConfig[]) => {
+    localStorage.setItem(configId, data ? JSON.stringify([]) : JSON.stringify(data));
+}
+
 export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, 'dataSource,rowKey,rowSelection,pagination'> {
-  data: E[],
-  keyField: keyof E,
-  multiSelect?: boolean,
-  onRowSelected?: (records: E[], keys: React.Key[]) => void,
-  clearSelectionAfterDataChange?: boolean,
-  selectOptions?: TableRowSelection<E>
+    data: E[],
+    keyField: keyof E,
+    multiSelect?: boolean,
+    onRowSelected?: (records: E[], keys: React.Key[]) => void,
+    clearSelectionAfterDataChange?: boolean,
+    selectOptions?: TableRowSelection<E>,
+    config?: {
+        id: string,
+        reader?: TableColumnConfigReader,
+    }
+}
+
+const convertColumnToConfig = <T extends Entity,>(col: ColumnType<T>): ITableColumnConfig => {
+    let width = 20;
+    if(typeof col.width === "number" && (col.width as number) > width)
+        width = col.width
+    return {
+      id: (col.dataIndex ? col.dataIndex as string : ""),
+      label: (col.title ? col.title as string : ""),
+      width: width,
+      visible: true,
+    };
+}
+
+/**
+ * columns can be changed. this function merge current columns and exist config to a complete configuration
+ * which can cover all current columns except system properties
+ * @param cols 
+ * @param config 
+ * @returns 
+ */
+const mergeTableColumnConfig = <T extends Entity,>(cols: ColumnType<T>[], config: ITableColumnConfig[]): ITableColumnConfig[] => {
+    let result: ITableColumnConfig[] = cols.map(c => {
+        let idx = config.findIndex(conf => conf.id === c.dataIndex);
+        let conf: ITableColumnConfig = idx < 0 
+            ? convertColumnToConfig(c)  // no config responsible
+            : config[idx];  // already config
+        conf.order = idx < 0 ? 1000 : idx;
+        return conf;
+    });
+    return result.sort((a, b) => (a.order || 0) - (b.order || 0) )
+}
+
+/**
+ * apply exist config to columns
+ * @param cols 
+ * @param config 
+ * @returns 
+ */
+export const applyTableColumnConfig = <T extends Entity,>(cols: ColumnType<T>[], config: ITableColumnConfig[]): ColumnType<T>[] => {
+    if(config.length === 0)
+        return cols;    // not config yet
+    let conf: ITableColumnConfig[] = mergeTableColumnConfig(cols, config);
+    let result: ColumnType<T>[] = [];
+    conf.filter(c => c.visible).forEach(c => {
+        let col: ColumnType<T> | undefined = cols.find(x => x.dataIndex === c.id);
+        if(col){
+            result.push({...col, width: c.width});
+        }
+    })
+    return result;
 }
 
 function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
