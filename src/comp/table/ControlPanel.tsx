@@ -1,6 +1,6 @@
 import React, { ReactElement,  ReactNode,  useEffect,  useState } from 'react';
 import { Button, Card, Col, Collapse, Pagination, Row, Space, Tabs } from 'antd';
-import { SearchOutlined,SettingOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, PageInfo } from '../model';
 import BaseForm, { IBaseFormItemProps, IBaseFormProps } from '../form/BaseForm';
@@ -46,13 +46,14 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
     // load column config
     if(props.config?.id){
       let cid = props.config?.id;
+      let hasLocalConfig: boolean = false;
       let conf: ITableColumnConfig[] = [];
       if(props.config?.reader){
-          conf = props.config.reader(cid, props.config.cols);
+          [hasLocalConfig, conf] = props.config.reader(cid, props.config.cols);
       } else {
-          conf = localStorageConfigReader(cid, props.config.cols);
+          [hasLocalConfig, conf] = localStorageConfigReader(cid, props.config.cols);
       }
-      setHasPersistConfig(conf.length > 0);
+      setHasPersistConfig(hasLocalConfig);
       setColumnConfig(conf);
       if(props.config?.onLoad){
         props.config.onLoad(applyTableColumnConfig(props.config.cols, conf));
@@ -104,7 +105,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
         props.config?.id ? (
           <Col flex="0 0 auto">
             <Space>
-              <Button type="primary" shape="circle" icon={<SettingOutlined />} onClick={e => {
+              <Button type="primary" shape="circle" icon={hasPersistConfig ? <FormOutlined /> : <EditOutlined />} onClick={e => {
                 setShowConfDialog(true);
               }} />
             </Space>
@@ -173,6 +174,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
     setColumnConfig(config);
     if(props.config?.id && props.config?.writter){
         props.config.writter(props.config.id, config);
+        setHasPersistConfig(true);
     }
     if(props.config?.onChange){
         props.config.onChange(applyTableColumnConfig(props.config.cols, config));

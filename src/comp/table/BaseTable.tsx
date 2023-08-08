@@ -12,14 +12,15 @@ export interface ITableColumnConfig {
   order?: number,
 }
 
-export type TableColumnConfigReader = (configId: string, cols?: ColumnType<any>[]) => ITableColumnConfig[];
+export type TableColumnConfigReader = (configId: string, cols?: ColumnType<any>[]) => [boolean, ITableColumnConfig[]];
 export const localStorageConfigReader: TableColumnConfigReader = (configId: string, cols?: ColumnType<any>[]) => {
     let confJson: string | null = localStorage.getItem(configId);
+    let hasPersistConf: boolean = (null !== confJson);
     let conf: ITableColumnConfig[] = [];
-    if(null !== confJson){
-        conf = JSON.parse(confJson);
+    if(hasPersistConf){
+        conf = JSON.parse(confJson || "[]");
     }
-    return cols === undefined ? conf : mergeTableColumnConfig(cols, conf);
+    return [hasPersistConf,  cols === undefined ? conf : mergeTableColumnConfig(cols, conf)];
 }
 
 export type TableColumnConfigWritter = (configId: string, data: ITableColumnConfig[]) => void;
