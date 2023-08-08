@@ -24,7 +24,17 @@ export const localStorageConfigReader: TableColumnConfigReader = (configId: stri
 
 export type TableColumnConfigWritter = (configId: string, data: ITableColumnConfig[]) => void;
 export const localStorageConfigWritter: TableColumnConfigWritter = (configId: string, data: ITableColumnConfig[]) => {
-    localStorage.setItem(configId, data ? JSON.stringify([]) : JSON.stringify(data));
+    localStorage.setItem(configId, data ? JSON.stringify(data) : JSON.stringify([]));
+}
+
+const getColumnDataIndexAsString = <T extends Entity,>(col: ColumnType<T>): string => {
+  let idx: string = "";
+  if(Array.isArray(col.dataIndex)){
+    idx = col.dataIndex.join(".")
+  } else if(col.dataIndex) {
+    idx = `${col.dataIndex}`;
+  }
+  return idx;
 }
 
 export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, 'dataSource,rowKey,rowSelection,pagination'> {
@@ -43,9 +53,10 @@ export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, '
 const convertColumnToConfig = <T extends Entity,>(col: ColumnType<T>): ITableColumnConfig => {
     let width = 20;
     if(typeof col.width === "number" && (col.width as number) > width)
-        width = col.width
+      width = col.width
+    
     return {
-      id: (col.dataIndex ? col.dataIndex as string : ""),
+      id: getColumnDataIndexAsString(col),
       label: (col.title ? col.title as string : ""),
       width: width,
       visible: true,
@@ -61,10 +72,10 @@ const convertColumnToConfig = <T extends Entity,>(col: ColumnType<T>): ITableCol
  */
 const mergeTableColumnConfig = <T extends Entity,>(cols: ColumnType<T>[], config: ITableColumnConfig[]): ITableColumnConfig[] => {
     let result: ITableColumnConfig[] = cols.map(c => {
-        let idx = config.findIndex(conf => conf.id === c.dataIndex);
+        let idx = config.findIndex(conf => conf.id === getColumnDataIndexAsString(c));
         let conf: ITableColumnConfig = idx < 0 
             ? convertColumnToConfig(c)  // no config responsible
-            : config[idx];  // already config
+            : {...config[idx]};  // already config
         conf.order = idx < 0 ? 1000 : idx;
         return conf;
     });
@@ -83,7 +94,7 @@ export const applyTableColumnConfig = <T extends Entity,>(cols: ColumnType<T>[],
     let conf: ITableColumnConfig[] = mergeTableColumnConfig(cols, config);
     let result: ColumnType<T>[] = [];
     conf.filter(c => c.visible).forEach(c => {
-        let col: ColumnType<T> | undefined = cols.find(x => x.dataIndex === c.id);
+        let col: ColumnType<T> | undefined = cols.find(x => getColumnDataIndexAsString(x) === c.id);
         if(col){
             result.push({...col, width: c.width});
         }

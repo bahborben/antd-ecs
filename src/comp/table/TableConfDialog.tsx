@@ -7,7 +7,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { Card, Divider, Modal, ModalProps, Row, Slider, Space, Switch, Tag } from 'antd';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     DragOutlined,
@@ -35,7 +35,7 @@ const DraggableTag: FC<DraggableTagProps> = (props) => {
   const { listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: tag.id });
 
   const commonStyle = {
-    cursor: 'move',
+    // cursor: 'move',
     transition: 'unset', // Prevent element from shaking after drag
   };
 
@@ -60,7 +60,7 @@ const DraggableTag: FC<DraggableTagProps> = (props) => {
     >
         {tag.label}
         <Divider type='vertical' />
-        <DragOutlined {...listeners} />
+        <DragOutlined  style={{cursor:"move"}} {...listeners} />
     </Tag>
   );
 };
@@ -76,7 +76,7 @@ const TableConfDialog: React.FC<ITableConfDialogProps> = (props) => {
 
     useEffect(()=> {
         setConfig(props.columnConfig)
-    }, []);
+    }, [props.columnConfig]);
 
     const sensors = useSensors(useSensor(PointerSensor));
 
@@ -147,6 +147,21 @@ const TableConfDialog: React.FC<ITableConfDialogProps> = (props) => {
         }
     };
 
+    const createColumnTags = (): ReactNode[] => {
+        return config.map((col) => {
+            return (
+                <DraggableTag
+                    tag={col}
+                    key={col.id}
+                    onClick={(t) => {
+                        setSelectedColumnId(t.id);
+                    }}
+                    color={getTagColor(col)}
+                />
+            );
+        })
+    }
+
     const getTagColor = (col: ITableColumnConfig): string => {
         let curr = getSelectedColumn(config, selectedColumnId)[1];
         if(col.id === curr?.id)
@@ -175,16 +190,7 @@ const TableConfDialog: React.FC<ITableConfDialogProps> = (props) => {
                     <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={closestCenter}>
                         <SortableContext items={config} strategy={horizontalListSortingStrategy}>
                             <Space size={[4, 12]} wrap>
-                                {config.map((col) => (
-                                    <DraggableTag
-                                        tag={col}
-                                        key={col.id}
-                                        onClick={(t) => {
-                                            setSelectedColumnId(t.id);
-                                        }}
-                                        color={getTagColor(col)}
-                                    />
-                                ))}
+                                {createColumnTags()}
                             </Space>
                         </SortableContext>
                     </DndContext>

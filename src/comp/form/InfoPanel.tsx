@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Descriptions } from 'antd';
-import { DescriptionsProps } from 'antd/lib/descriptions';
+import { DescriptionsItemType, DescriptionsProps } from 'antd/lib/descriptions';
 import { Entity } from '../model';
 import get from 'lodash/get';
 
@@ -11,26 +11,30 @@ export interface IInfoPanelItem<E extends Entity> {
   render?: (value: E) => ReactNode
 }
 
-export interface IInfoPanelProp<E extends Entity> extends DescriptionsProps {
+export interface IInfoPanelProp<E extends Entity> extends Omit<DescriptionsProps, "items"> {
   data: E,
   items: IInfoPanelItem<E>[]
 }
 
 function InfoPanel<E extends Entity>(props: React.PropsWithChildren<IInfoPanelProp<E>>) {
 
-  const createDescriptionItems = (data: E, items: IInfoPanelItem<E>[]) => {
-    return items.map(x => (
-      <Descriptions.Item label={x.label} span={x.span || 1}>
-        {x.render ? x.render(data) : get(data, x.dataIndex, "") as string}
-      </Descriptions.Item>
-    ));
+  const createDescriptionItems = (data: E, items: IInfoPanelItem<E>[]): DescriptionsItemType[] => {
+    let idx = 0;
+    return items.map(x => {
+        return {
+            key: idx++,
+            label: x.label,
+            span: x.span,
+            children: x.render ? x.render(data) : get(data, x.dataIndex, "") as string
+        }
+    });
   }
 
-  const {data, items} = props;
   return (
-    <Descriptions {...props} >
-      {createDescriptionItems(data, items)}
-    </Descriptions>
+    <Descriptions
+      {...props}
+      items={createDescriptionItems(props.data, props.items)}
+    />
   );
 }
 

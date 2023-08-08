@@ -38,6 +38,8 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
   const [showFilterForm, setShowFilterForm] = useState(false);
   const [commonFilterMode, setCommonFilterMode] = useState(true);
   const [columnConfig, setColumnConfig] = useState([] as ITableColumnConfig[]);
+  const [showConfDialog, setShowConfDialog] = useState(false);
+  const [hasPersistConfig, setHasPersistConfig] = useState(false);
 
   useEffect(() => {
     setShowFilterForm(getCommonFilterItems().length > 0 ? true : false);
@@ -50,6 +52,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
       } else {
           conf = localStorageConfigReader(cid, props.config.cols);
       }
+      setHasPersistConfig(conf.length > 0);
       setColumnConfig(conf);
       if(props.config?.onLoad){
         props.config.onLoad(applyTableColumnConfig(props.config.cols, conf));
@@ -102,7 +105,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
           <Col flex="0 0 auto">
             <Space>
               <Button type="primary" shape="circle" icon={<SettingOutlined />} onClick={e => {
-                
+                setShowConfDialog(true);
               }} />
             </Space>
           </Col>
@@ -174,6 +177,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
     if(props.config?.onChange){
         props.config.onChange(applyTableColumnConfig(props.config.cols, config));
     }
+    setShowConfDialog(false);
   }
 
   return (
@@ -188,6 +192,8 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
         <TableConfDialog
             columnConfig={columnConfig}
             onConfigChange={handleConfigChange}
+            open={showConfDialog}
+            onCancel={e => setShowConfDialog(false)}
         />
     </React.Fragment>
   );
