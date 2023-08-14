@@ -44,7 +44,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
   let rows: ReactNode[] = getLayout(items, cols);
   return(
     <Modal
-      visible={visible}
+      open={visible}
       title={title}
       okText={okTitle ? okTitle : i18n.t("form.EditDialog.ok")}
       cancelText={cancelTitle ? cancelTitle : i18n.t("form.EditDialog.cancel")}

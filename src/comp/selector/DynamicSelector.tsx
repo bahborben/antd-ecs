@@ -3,11 +3,12 @@ import { Select } from 'antd';
 import { Entity } from '../model';
 import { RefDataProvider, RefId, IRefQueryCondition } from './interface';
 import { SelectProps } from 'antd/lib/select';
-import { useDebounce } from '../util';
 
 const {Option} = Select;
 
-export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, E>, "onChange"> {
+export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, E>, 
+  "onChange" | "children" | "options" | "optionLabelProp" | "optionFilterProp" | "mode" | "fieldNames" 
+  | "onClear" | "showSearch" | "loading"> {
   onLoadData: RefDataProvider<E, ID>,
   idField: string,
   optionRender: (record: E) => ReactNode,
@@ -19,48 +20,19 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
 
   const [data, setData] = useState<E[]>([]);
   const [selectedValue, setSelectedValue] = useState<ID | undefined>(undefined);
-  const [keyword, setKeyword] = useState<string | undefined>(undefined);
-  const [lastSearch, setLastSearch] = useState<string>("");
-
-  const debouncedKeyword: string | undefined = useDebounce<string | undefined>(keyword, 500);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let currValue = getCurrentValue();
-    if(currValue !== undefined){
-      (async () => {
-        let condition: IRefQueryCondition<ID> = {
-          refIds: [currValue]
-        };
-        let data: E[] = await props.onLoadData(condition);
-        setData(data); 
-      })();
-    } else if(undefined !== props.initializeCondition) {
-      // if not specific current value, default query by initializeCondition
-      (async () => {
-        let data: E[] = await props.onLoadData(props.initializeCondition || {});
-        setData(data);        
-      })();
-    }
+    (async () => {
+      let data: E[] = await props.onLoadData(props.initializeCondition || {});
+      setData(data);
+      setLoading(false);
+      setSelectedValue(props.defaultValue ?? undefined);
+    })();
   }, []);
 
-  useEffect(() => {
-    if(debouncedKeyword)
-      handleSearch(debouncedKeyword);
-  }, [debouncedKeyword]);
-
   const getCurrentValue = (): ID | undefined => {
-    return props.value || selectedValue || props.defaultValue || undefined;
-  }
-
-  const handleSearch = async (value: string) => {
-    if(value.trim() === lastSearch.trim())
-      return;
-    setLastSearch(value);
-    let condition: IRefQueryCondition<ID> = {      
-      keyword: value
-    };
-    let data: E[] = await props.onLoadData(condition);
-    setData(data);
+    return data.length === 0 ? "" as ID : (props.value || selectedValue || undefined);
   }
 
   const handleChange = (value: ID): void => {
@@ -76,12 +48,11 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
     <Select
       {...props}
       showSearch
-      showArrow={true}
+      onClear={() => setSelectedValue(undefined)}
+      loading={loading}
       value={getCurrentValue()}
       onChange={handleChange}
-      onSearch={value => setKeyword(value)}
-      onClear={() => handleSearch("")}
-      filterOption={false}
+      optionFilterProp="children"
     >
       {
         data.map(d => (

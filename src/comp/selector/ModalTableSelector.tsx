@@ -115,7 +115,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
           setSelectedData(records && records.length > 0 ? records[0]: undefined);          
         }}
         onCancel={() => {setShowTable(false)}}
-        visible={showTable}
+        open={showTable}
         onSelect={handleSelect}
         okText={i18n.t("selector.ModalTableSelector.ok")}
         cancelText={i18n.t("selector.ModalTableSelector.cancel")}
