@@ -56,6 +56,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
   let rows: ReactNode[] = getLayout(items, cols);
   return(
     <Modal
+      style={props.style}
       open={visible}
       title={title}
       okText={okTitle ? okTitle : "确认"}
@@ -71,7 +72,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
         labelAlign="right"
         validateMessages={validateMessages}
         scrollToFirstError={true}
-        {...(omit(props, ["onCancel"]))}
+        {...(omit(props, ["onCancel", "style"]))}
         form={formRef}
       >
         {rows}
