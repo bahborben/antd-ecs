@@ -131,6 +131,7 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
   }, [selectedKeys]);
   
   const _toggleRowSelection = (rec: E): void => {
+    console.log("toggle row selection: ", rec);
     let key: string | undefined = getEntityFieldValueInString(rec, props.keyField || "");
     if(!key)
       return;
@@ -183,13 +184,6 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
       setSelectedKeys(sks as string[]);
     },
     selectedRowKeys: selectedKeys,
-    renderCell: (value, record, index, originNode) => {
-      let rk: string | undefined = getEntityFieldValueInString(record, props.keyField)
-      let isSelected: boolean = (rk != undefined && selectedKeys.includes(rk));
-      return props.multiSelect ?
-        <Checkbox checked={isSelected} onClick={e => _toggleRowSelection(record)}/>
-        : <Radio checked={isSelected} onClick={e => _toggleRowSelection(record)}/>
-    }
   };
 
   return (

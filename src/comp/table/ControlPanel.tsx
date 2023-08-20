@@ -4,7 +4,7 @@ import { SearchOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, PageInfo } from '../model';
 import BaseForm, { IBaseFormItemProps, IBaseFormProps } from '../form/BaseForm';
-import i18n from '../i18n/i18n';
+// import i18n from '../i18n/i18n';
 import { ITableColumnConfig, TableColumnConfigReader, TableColumnConfigWritter, applyTableColumnConfig, localStorageConfigReader } from './BaseTable';
 import { ColumnType } from 'antd/lib/table/interface';
 import TableConfDialog from './TableConfDialog';
@@ -130,7 +130,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
           <Card>
             <BaseForm<QC>
               allowReset={true}
-              submitTitle={i18n.t("table.ControlPanel.search")}
+              submitTitle={"查询"}
 		          extraOperations={[
                 (<Button onClick={e => setCommonFilterMode(false)}>more</Button>)
               ]}
@@ -150,7 +150,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
           <Card>
             <BaseForm<QC>
               allowReset={true}
-              submitTitle={i18n.t("table.ControlPanel.search")}
+              submitTitle={"查询"}
 		          extraOperations={getCommonFilterItems().length > 0 ? [<Button onClick={e => setCommonFilterMode(true)}>back</Button>] : []}                
               {...props.filters}
             />

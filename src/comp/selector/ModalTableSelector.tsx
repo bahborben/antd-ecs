@@ -3,7 +3,7 @@ import { Input } from 'antd';
 import { Entity, getEntityFieldValueInString } from '../model';
 import { IRefQueryCondition, RefId } from './interface';
 import SearchTable, { ISearchTableProps } from '../table/SearchTable';
-import i18n from '../i18n/i18n';
+// import i18n from '../i18n/i18n';
 import { useDebounce } from '../util';
 
 
@@ -97,7 +97,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   return (
     <React.Fragment>
       <Search
-        placeholder={i18n.t("selector.ModalTableSelector.keyword")}
+        placeholder={"查询关键字"}
         onSearch={handleSearch}
         value={keyword === undefined ? props.titleRender(selectedData) : keyword}
         onChange={handleChange}
@@ -117,8 +117,8 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
         onCancel={() => {setShowTable(false)}}
         open={showTable}
         onSelect={handleSelect}
-        okText={i18n.t("selector.ModalTableSelector.ok")}
-        cancelText={i18n.t("selector.ModalTableSelector.cancel")}
+        okText={"确认"}
+        cancelText={"取消"}
       />
     </React.Fragment>
   );

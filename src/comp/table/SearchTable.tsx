@@ -8,7 +8,7 @@ import { Input, InputRef, Spin, Modal, ModalProps, Col, Row, Card } from 'antd';
 import { PageableRefDataProvider, RefId } from '../selector/interface';
 import ControlPanel from './ControlPanel';
 import { useDebounce } from '../util';
-import i18n from '../i18n/i18n';
+// import i18n from '../i18n/i18n';
 
 const {Search} = Input;
 
@@ -72,14 +72,13 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
   const handlePageChange = (current: number, pageSize?: number): void => {
     doSearch(keyword || "", {...pageInfo, pageSize, current});
   }
-
   return (      
     <Modal
       {...props}
       title={
         <Search
           ref={keywordInputRef}
-          addonBefore={i18n.t("table.SearchTable.keyword")}
+          addonBefore="关键字"
           onSearch={(value) => {doSearch(value || '', pageInfo);}}
           value={keyword}
           onChange={handleKeywordChange}
@@ -96,7 +95,7 @@ function SearchTable<E extends Entity, ID extends RefId>(props: ISearchTableProp
               page={{
                 status: pageInfo,
                 conf: {                          
-                  showTotal: (count => `${i18n.t("table.SearchTable.summary", {count})}`),
+                  showTotal: (count => `共${count}条`),
                   size: "small",
                   showLessItems: true,
                   responsive: true,

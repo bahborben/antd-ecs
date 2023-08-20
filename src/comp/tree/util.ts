@@ -1,6 +1,6 @@
 import { Key } from 'react';
-import {DataNode} from 'rc-tree/lib/interface';
 import { Entity } from '../model';
+import { DataNode } from 'antd/es/tree';
 
 export interface ITreeNode<E extends Entity> extends DataNode {
   entity: E,

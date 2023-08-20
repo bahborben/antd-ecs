@@ -1,11 +1,11 @@
 import React, { ReactNode, useEffect } from 'react';
 import { Form, Modal } from 'antd';
 import { Entity } from '../model';
-import { IBaseFormProps, getLayout } from './BaseForm';
-import i18n from "../i18n/i18n";
-import { get } from 'lodash'
+import BaseForm, { IBaseFormProps, getLayout } from './BaseForm';
+// import i18n from "../i18n/i18n";
+import { get, omit } from 'lodash'
 
-export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E>, "onSubmit"> {
+export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E>, "onSubmit"|"onCancel"> {
   visible: boolean,
   clearAfterSubmit?: boolean,
   title: string,
@@ -18,13 +18,21 @@ export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E
 
 function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
 
-  const formRef = props.form ?? Form.useForm()[0];
+  const formRef = props.form ?? Form.useForm<E>()[0];
 
   useEffect(()=> {
     for(let key in props.data){
       formRef.setFieldValue(key, get(props.data, key));
     }
   }, [props.data]);
+
+  useEffect(()=> {
+    if(props.visible){
+      for(let key in props.data){
+        formRef.setFieldValue(key, get(props.data, key));
+      }
+    }
+  }, [props.visible]);
 
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     formRef.validateFields().then(values => {
@@ -50,24 +58,24 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
     <Modal
       open={visible}
       title={title}
-      okText={okTitle ? okTitle : i18n.t("form.EditDialog.ok")}
-      cancelText={cancelTitle ? cancelTitle : i18n.t("form.EditDialog.cancel")}
+      okText={okTitle ? okTitle : "确认"}
+      cancelText={cancelTitle ? cancelTitle : "取消"}
       onOk={handleOk}
       onCancel={handleCancel}
       width={width ?? "70vw"}
       destroyOnClose={true}
     >
-      <Form
+      <BaseForm
         preserve={false}  // clear data after modal destroyed
         className="base-form"
         labelAlign="right"
         validateMessages={validateMessages}
         scrollToFirstError={true}
-        {...props}
+        {...(omit(props, ["onCancel"]))}
         form={formRef}
       >
         {rows}
-      </Form>
+      </BaseForm>
     </Modal>
   );
 }

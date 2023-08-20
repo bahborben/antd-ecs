@@ -20,6 +20,13 @@ dist/
 .env.test.local
 .env.production.local
 
+# build
+.yarn/**
+.yarnrc.yml
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
