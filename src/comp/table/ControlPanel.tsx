@@ -129,6 +129,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
         <Row>
           <Card>
             <BaseForm<QC>
+              preserve={true} // reatain the value after filter panel collapse by default
               allowReset={true}
               submitTitle={"查询"}
 		          extraOperations={[
@@ -149,6 +150,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
         <Row>
           <Card>
             <BaseForm<QC>
+              preserve={true}
               allowReset={true}
               submitTitle={"查询"}
 		          extraOperations={getCommonFilterItems().length > 0 ? [<Button onClick={e => setCommonFilterMode(true)}>back</Button>] : []}                
