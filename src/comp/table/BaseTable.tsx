@@ -131,7 +131,6 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
   }, [selectedKeys]);
   
   const _toggleRowSelection = (rec: E): void => {
-    console.log("toggle row selection: ", rec);
     let key: string | undefined = getEntityFieldValueInString(rec, props.keyField || "");
     if(!key)
       return;

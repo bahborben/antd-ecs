@@ -17,6 +17,7 @@ export interface IModalTableSelectorProps<E extends Entity, ID extends RefId> ex
   allowClear?: boolean,
   disabled?: boolean,
   autoShow?: boolean,
+  delay?: number,
 }
 
 function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTableSelectorProps<E, ID>){
@@ -26,14 +27,19 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   const [keyword, setKeyword] = useState<string|undefined>(undefined);
   const [inputLock, setInputLock] = useState(false);
 
-  const debouncedKeyword: string|undefined = useDebounce<string|undefined>(keyword, 500);
+  const debouncedKeyword: string|undefined = useDebounce<string|undefined>(keyword, props.delay ?? 500);
 
   useEffect(() => {
     loadByValue(props.value);
   }, [props.value]);
 
   useEffect(() => {
-    if(debouncedKeyword !== undefined && props.autoShow && !inputLock){
+    if(
+      props.autoShow
+      && debouncedKeyword !== undefined
+      && debouncedKeyword.trim() !== ""
+      && !inputLock
+    ){
       handleSearch(debouncedKeyword);
     }
   }, [debouncedKeyword]);
@@ -98,7 +104,12 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
     <React.Fragment>
       <Search
         placeholder={"查询关键字"}
-        onSearch={handleSearch}
+        onSearch={(v, e) => {
+          if(!(e?.nativeEvent.type==="click" && ("value" in e?.target ?? {}))){
+            // do search only for keyDown or search button clicked
+            handleSearch(v);
+          }          
+        }}
         value={keyword === undefined ? props.titleRender(selectedData) : keyword}
         onChange={handleChange}
         allowClear={props.allowClear}

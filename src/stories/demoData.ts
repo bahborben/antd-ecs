@@ -1,8 +1,9 @@
 import { ColumnsType } from "antd/es/table";
-import { ETInput } from "../comp/editor";
+import { ETInput, ETTableModalSelector } from "../comp/editor";
 import { IBaseFormItemProps } from "../comp/form/interface";
-import { Entity } from "../comp/model";
+import { Entity, PageInfo } from "../comp/model";
 import { Checkbox } from "antd";
+import { IRefQueryCondition, PageableRefDataProvider } from "../comp/selector/interface";
 
 export interface IEmployee extends Entity {
     id?: string,
@@ -33,13 +34,6 @@ export const employeeColumns: ColumnsType<IEmployee> = [
     { title: '组织名称', dataIndex: 'orgName', width: 180},
 ];
 
-export const employeeItems: IBaseFormItemProps[] = [
-    {key: "code", label: "工号", span: 1, editor: new ETInput({})},
-    {key: "name", label: "姓名", span: 1, editor: new ETInput({})},
-    {key: "deptName", label: "部门名称", span: 1, editor: new ETInput({})},
-    {key: "orgName", label: "组织名称", span: 1, editor: new ETInput({})},
-];
-
 export const employee1: IEmployee = {
     id: "1",
     code: "001001",
@@ -66,3 +60,34 @@ export const employee3: IEmployee = {
     orgName: "吴",
     enable: 1,
 };
+
+export const employeePageableRefProvider: PageableRefDataProvider<IEmployee, string> = (queryCondition: IRefQueryCondition<string>, pageInfo: PageInfo) => {
+    return (async () => {
+        return [
+            [employee1, employee2, employee3], 
+            {
+                current: 0,
+                pageSize: 25,
+                total: 3,
+            } as PageInfo
+        ];
+    })();
+}
+
+export const employeeItems: IBaseFormItemProps[] = [
+    {key: "code", label: "工号", span: 1, editor: new ETInput({})},
+    {key: "name", label: "姓名", span: 1, editor: new ETInput({})},
+    {key: "deskmate", label: "同桌", span: 1, editor: new ETTableModalSelector({
+        onLoadData: employeePageableRefProvider,
+        valueField: "code",
+        width: "50vw",
+        titleRender: (data) => data?.name || "",
+        columns: employeeColumns,
+        keyField: "code",
+        allowClear: true,
+        autoShow: true,
+        pageSize: 10,
+    })},
+    {key: "deptName", label: "部门名称", span: 1, editor: new ETInput({})},
+    {key: "orgName", label: "组织名称", span: 1, editor: new ETInput({})},
+];
