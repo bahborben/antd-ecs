@@ -23,7 +23,7 @@ export function composeTree<E extends Entity>(
   objects: E[],
   keyField: string,
   parentField: string,
-  title: (e: E) => string,
+  titleRender: (e: E) => string,
   comparator?: (self: ITreeNode<E>, other: ITreeNode<E>) => number,
   virtualRoot?: ITreeNode<any>,
 ): ITreeNode<E>[] {
@@ -33,7 +33,7 @@ export function composeTree<E extends Entity>(
     let node: ITreeNode<E> = {
       key: (o[keyField] || "") as string,
       parent: o[parentField] as string,
-      title: title(o),
+      title: titleRender(o),
       entity: o,
       children: []
     }

@@ -1,9 +1,54 @@
 import { ColumnsType } from "antd/es/table";
-import { ETInput, ETTableModalSelector } from "../comp/editor";
+import { ETInput, ETTableModalSelector, ETTreeSelector } from "../comp/editor";
 import { IBaseFormItemProps } from "../comp/form/interface";
 import { Entity, PageInfo } from "../comp/model";
-import { Checkbox } from "antd";
 import { IRefQueryCondition, PageableRefDataProvider } from "../comp/selector/interface";
+
+export interface IAnimal extends Entity{
+    id: string,
+    typeId?: string,
+    name: string,
+}
+export const treeData: IAnimal[] = [
+    {
+        id: "mammal",
+        name: "哺乳动物"
+    },{
+        id: "mammalCat",
+        typeId: "mammal",
+        name: "猫科"
+    },{
+        id: "mammalCat1",
+        typeId: "mammalCat",
+        name: "大橘"
+    },{
+        id: "mammalCat2",
+        typeId: "mammalCat",
+        name: "虎斑"
+    },{
+        id: "mammalCat2",
+        typeId: "mammalCat",
+        name: "虎斑"
+    },{
+        id: "mammalCat3",
+        typeId: "mammalCat",
+        name: "布偶"
+    },{
+        id: "mammalDog",
+        typeId: "mammal",
+        name: "犬科"
+    },{
+        id: "mammalDog1",
+        typeId: "mammalDog",
+        name: "边牧"
+    },{
+        id: "fish",
+        name: "鱼类"
+    },{
+        id: "bird",
+        name: "鸟类"
+    }
+];
 
 export interface IEmployee extends Entity {
     id?: string,
@@ -87,6 +132,20 @@ export const employeeItems: IBaseFormItemProps[] = [
         allowClear: true,
         autoShow: true,
         pageSize: 10,
+    })},
+    {key: "ped", label: "宠物", span: 1, editor: new ETTreeSelector({
+        showSearch: true,
+        data: treeData,
+        idField: "id",
+        parentField: "typeId",
+        titleRender: (v) => {return v.name},
+        filterTreeNode: (v, n) => {
+            if(v && v.trim() !== ""){
+                return ((n.title ?? "") as string).indexOf(v) >= 0 || ((n.value ?? "") as string).indexOf(v) >= 0;
+            } else{
+                return true;
+            }
+        }
     })},
     {key: "deptName", label: "部门名称", span: 1, editor: new ETInput({})},
     {key: "orgName", label: "组织名称", span: 1, editor: new ETInput({})},
