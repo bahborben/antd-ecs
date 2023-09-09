@@ -21,12 +21,6 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
   const formRef = props.form ?? Form.useForm<E>()[0];
 
   useEffect(()=> {
-    for(let key in props.data){
-      formRef.setFieldValue(key, get(props.data, key));
-    }
-  }, [props.data]);
-
-  useEffect(()=> {
     if(props.visible){
       for(let key in props.data){
         formRef.setFieldValue(key, get(props.data, key));

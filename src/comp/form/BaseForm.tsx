@@ -1,9 +1,10 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { Form, Row, Col, Button, Space, DividerProps, Divider } from 'antd';
 import { FormItemProps, FormProps } from 'antd/lib/form';
 import { Store } from 'antd/lib/form/interface';
 import { EditorType } from '../editor';
 import { Data, Entity } from '../model';
+import get from 'lodash/get';
 // import i18n from '../i18n/i18n';
 
 
@@ -139,6 +140,15 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
 
   const [formInstance] = Form.useForm<E>();
   const formRef = props.form ? props.form : formInstance;
+
+  useEffect(()=> {
+    // initialize data
+    if(props.data){
+      for(let key in props.data){
+        formRef.setFieldValue(key, get(props.data, key));
+      }
+    }
+  }, [props.data]);
 
   const handleSubmit = (values: Store) => {
     if(props.onSubmit)
