@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import EditDialogWrapper from './EditDialogWrapper';
-import { employee1, employee2, employeeItems } from '../demoData';
+import { employee1, employeeItems } from '../demoData';
 
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

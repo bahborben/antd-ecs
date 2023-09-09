@@ -1,7 +1,7 @@
 import { ColumnsType } from "antd/es/table";
 import { ETInput, ETTableModalSelector, ETTreeSelector } from "../comp/editor";
 import { IBaseFormItemProps } from "../comp/form/interface";
-import { Entity, PageInfo } from "../comp/model";
+import { Data, Entity, PageInfo } from "../comp/model";
 import { IRefQueryCondition, PageableRefDataProvider } from "../comp/selector/interface";
 
 export interface IAnimal extends Entity{
@@ -78,6 +78,11 @@ export const employeeColumns: ColumnsType<IEmployee> = [
     { title: '组织编号', dataIndex: 'orgCode', width: 120},
     { title: '组织名称', dataIndex: 'orgName', width: 180},
 ];
+export interface IEmployeeQC extends Data {
+    code?: string,
+    name?: string,
+    idn?: string,    
+}
 
 export const employee1: IEmployee = {
     id: "1",
@@ -149,4 +154,9 @@ export const employeeItems: IBaseFormItemProps[] = [
     })},
     {key: "deptName", label: "部门名称", span: 1, editor: new ETInput({})},
     {key: "orgName", label: "组织名称", span: 1, editor: new ETInput({})},
+];
+export const employeeQCItems: IBaseFormItemProps[] = [
+    {key: "code", label: "工号", span: 1, editor: new ETInput({})},
+    {key: "name", label: "姓名", span: 1, editor: new ETInput({})},
+    {key: "idn", label: "证件号", span: 1, editor: new ETInput({})},
 ];
