@@ -4,19 +4,20 @@ import { SearchOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, PageInfo } from '../model';
 import BaseForm, { IBaseFormItemProps, IBaseFormProps } from '../form/BaseForm';
-// import i18n from '../i18n/i18n';
+import i18n from '../i18n/i18n';
 import { ITableColumnConfig, TableColumnConfigReader, TableColumnConfigWritter, applyTableColumnConfig, localStorageConfigReader } from './BaseTable';
 import { ColumnType } from 'antd/lib/table/interface';
 import TableConfDialog from './TableConfDialog';
 
 const {TabPane} = Tabs;
+const {t} = i18n;
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
   onPageChange: (page: number, pageSize?: number) => void,
 }
 
 export interface IControlPanelProp<QC extends Data, COL extends Entity>{
-  operations?: ReactElement<any>,
+  operations?: ReactNode,
   page?: {
     status: PageInfo,
     conf: IPagination,
@@ -131,9 +132,9 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
             <BaseForm<QC>
               preserve={true} // reatain the value after filter panel collapse by default
               allowReset={true}
-              submitTitle={"查询"}
+              submitTitle={t("table.ControlPanel.search")}
 		          extraOperations={[
-                (<Button onClick={e => setCommonFilterMode(false)}>more</Button>)
+                (<Button onClick={e => setCommonFilterMode(false)}>${t("table.ControlPanel.more")}</Button>)
               ]}
               {...props.filters}
               items={ci}
@@ -152,8 +153,8 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
             <BaseForm<QC>
               preserve={true}
               allowReset={true}
-              submitTitle={"查询"}
-		          extraOperations={getCommonFilterItems().length > 0 ? [<Button onClick={e => setCommonFilterMode(true)}>back</Button>] : []}                
+              submitTitle={t("table.ControlPanel.search")}
+		          extraOperations={getCommonFilterItems().length > 0 ? [<Button onClick={e => setCommonFilterMode(true)}>${t("table.ControlPanel.back")}</Button>] : []}                
               {...props.filters}
             />
           </Card>

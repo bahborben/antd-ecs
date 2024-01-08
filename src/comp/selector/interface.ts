@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Entity, PageInfo } from "../model";
 
 // 参照项id类型
@@ -9,6 +10,8 @@ export interface IRefQueryCondition<ID extends RefId> {
   keyword?: string,
   [key: string]: any
 }
+
+export type SelectorLabelRender<E extends Entity> = string | ((entity: E)=>(string | undefined));
 
 // 动态内容参照的数据加载接口
 export declare type RefDataProvider<E extends Entity, ID extends RefId> = (queryCondition: IRefQueryCondition<ID>) => Promise<E[]>;

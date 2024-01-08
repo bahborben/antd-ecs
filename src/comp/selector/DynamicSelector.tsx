@@ -1,17 +1,16 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Select } from 'antd';
 import { Entity } from '../model';
-import { RefDataProvider, RefId, IRefQueryCondition } from './interface';
-import { SelectProps } from 'antd/lib/select';
+import { RefDataProvider, RefId, IRefQueryCondition, SelectorLabelRender } from './interface';
+import { BaseOptionType, SelectProps } from 'antd/lib/select';
+import { get } from 'lodash';
 
-const {Option} = Select;
-
-export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, E>, 
+export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, BaseOptionType>, 
   "onChange" | "children" | "options" | "optionLabelProp" | "optionFilterProp" | "mode" | "fieldNames" 
   | "onClear" | "showSearch" | "loading"> {
   onLoadData: RefDataProvider<E, ID>,
   idField: string,
-  optionRender: (record: E) => ReactNode,
+  labelRender: SelectorLabelRender<E>,
   onChange?: (value: ID, record?: E) => void,
   initializeCondition?: IRefQueryCondition<ID>
 }
@@ -43,6 +42,17 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
     setSelectedValue(value);    
   }
 
+  const getOptions = (): BaseOptionType[] => {
+    return data.map(d => {
+      let lbl: ReactNode = "";
+      if(typeof(props.labelRender) === "string")
+        lbl = get(d, props.labelRender) as string;
+      else
+        lbl = props.labelRender(d) || "";
+      return {...d, value: get(d, props.idField), label: lbl};
+    });
+  }
+
   let {idField, optionRender} = props;
   return (
     <Select
@@ -53,15 +63,8 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
       value={getCurrentValue()}
       onChange={handleChange}
       optionFilterProp="children"
-    >
-      {
-        data.map(d => (
-          <Option key={d[idField] as string} value={(d[idField] || "") as string}>
-            {optionRender(d)}
-          </Option>
-        ))
-      }
-    </Select>
+      options={getOptions()}
+    />
   );
 }
 

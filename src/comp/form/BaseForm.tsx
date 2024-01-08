@@ -5,7 +5,9 @@ import { Store } from 'antd/lib/form/interface';
 import { EditorType } from '../editor';
 import { Data, Entity } from '../model';
 import get from 'lodash/get';
-// import i18n from '../i18n/i18n';
+import i18n from '../i18n/i18n';
+
+const { t } = i18n;
 
 
 export interface IBaseFormItemProps extends FormItemProps {
@@ -14,10 +16,10 @@ export interface IBaseFormItemProps extends FormItemProps {
   span: 1 | 2 | 3 | 4,
   editor?: EditorType<any>,
   subItems?: IBaseFormItemProps[],
-  sectionStart?: Omit<DividerProps, 'type'> & {title?: string};  // all horizontal,
+  sectionStart?: Omit<DividerProps, 'type'> & { title?: string };  // all horizontal,
 }
 
-export interface IBaseFormProps<E extends (Entity | Data)> extends Omit<FormProps<E>, 'initialValues,onFinish'>{
+export interface IBaseFormProps<E extends (Entity | Data)> extends Omit<FormProps<E>, 'initialValues,onFinish'> {
   data: E,
   items: IBaseFormItemProps[],
   cols: 1 | 2 | 3 | 4,
@@ -32,7 +34,7 @@ export interface IBaseFormProps<E extends (Entity | Data)> extends Omit<FormProp
 }
 
 const getItem = (prop: IBaseFormItemProps): ReactNode => {
-  if(prop.subItems && prop.subItems.length > 0){
+  if (prop.subItems && prop.subItems.length > 0) {
     // 项目组合
     let sub: IBaseFormItemProps[] = prop.subItems;
     return (
@@ -54,7 +56,7 @@ const getItem = (prop: IBaseFormItemProps): ReactNode => {
   );
 }
 
-const getColSpan = (colCount:number, span: number): number => {
+const getColSpan = (colCount: number, span: number): number => {
   return 24 / colCount * (span > colCount ? colCount : span);
 }
 
@@ -65,12 +67,12 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
     end: number = 0,
     span: number = 0;
 
-  for(let i = 0; i < items.length; i++){
+  for (let i = 0; i < items.length; i++) {
     end = i;
     let currCount = items[i].span > colCount ? colCount : items[i].span;
     // 按需添加 Divider
-    if(undefined !== items[i].sectionStart){
-      if(end >= start){
+    if (undefined !== items[i].sectionStart) {
+      if (end >= start) {
         // 尚未排版的项目
         let rowElements = items.slice(start, end);
         rows.push(
@@ -86,13 +88,13 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
       let t: string | undefined = items[i].sectionStart?.title;
       let sdClone = Object.assign({}, items[i].sectionStart);
       delete sdClone.title;
-      if(t !== undefined){
+      if (t !== undefined) {
         rows.push(
           <Divider {...sdClone}>{t}</Divider>
         );
       } else {
         rows.push(
-          <Divider {...sdClone}/>
+          <Divider {...sdClone} />
         );
       }
       // 重置计数
@@ -100,10 +102,10 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
       start = i;
     } else {
       span += currCount;
-      if(span > colCount){
+      if (span > colCount) {
         // 如超出宽度, 或是区域起始点，则将已计数的item归入Row记录
         let rowElements = items.slice(start, end);
-        if(rowElements.length > 0){
+        if (rowElements.length > 0) {
           rows.push(
             <Row key={i} gutter={24}>
               {rowElements.map(e => (
@@ -120,7 +122,7 @@ export const getLayout = (items: IBaseFormItemProps[], colCount: number): ReactN
       }
     }
   }
-  if(end >= start){
+  if (end >= start) {
     // 最后sheng不足一行的
     let rowElements = items.slice(start);
     rows.push(
@@ -141,22 +143,22 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
   const [formInstance] = Form.useForm<E>();
   const formRef = props.form ? props.form : formInstance;
 
-  useEffect(()=> {
+  useEffect(() => {
     // initialize data
-    if(props.data){
-      for(let key in props.data){
+    if (props.data) {
+      for (let key in props.data) {
         formRef.setFieldValue(key, get(props.data, key));
       }
     }
   }, [props.data]);
 
   const handleSubmit = (values: Store) => {
-    if(props.onSubmit)
+    if (props.onSubmit)
       props.onSubmit(values as E);
   }
 
   const handleReset = () => {
-    if(props.onReset){
+    if (props.onReset) {
       props.onReset();
     } else {
       let keys: string[] = props.items.map(x => x.key);
@@ -164,26 +166,23 @@ function BaseForm<E extends Entity | Data>(props: IBaseFormProps<E>) {
     }
   }
 
-  let {items, cols} = props
+  let { items, cols } = props
   let rows: ReactNode[] = getLayout(items, cols);
-  return(
+  return (
     <Form
       labelWrap
       {...props}
-      form={formRef}      
+      form={formRef}
       onFinish={handleSubmit}
     >
       {rows}
       {
         <Row align="middle" gutter={8} justify="end">
           <Space>
-            {/* {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || t("form.BaseForm.submit")}</Button>}
+            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || t("form.BaseForm.submit")}</Button>}
             {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || t("form.BaseForm.cancel")}</Button>}
-            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || t("form.BaseForm.reset")}</Button> : undefined} */}
-            {undefined === props.onSubmit ? undefined : <Button type="primary" htmlType="submit">{props.submitTitle || "提交"}</Button>}
-            {undefined === props.onCancel ? undefined : <Button onClick={e => (props.onCancel as () => void)()}>{props.cancelTitle || "取消"}</Button>}
-            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || "重置"}</Button> : undefined}
-		        {props.extraOperations && props.extraOperations.length ? props.extraOperations : undefined}
+            {props.allowReset ? <Button onClick={e => handleReset()}>{props.resetTitle || t("form.BaseForm.reset")}</Button> : undefined}
+            {props.extraOperations && props.extraOperations.length ? props.extraOperations : undefined}
           </Space>
         </Row>
       }

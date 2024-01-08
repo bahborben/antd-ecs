@@ -5,7 +5,9 @@ import { SaveOutlined, EditOutlined, DeleteOutlined, UndoOutlined, ExclamationCi
 import { Entity, getEntityFieldValueInString } from '../model';
 import BaseTable, { IBaseTableProps } from './BaseTable';
 import { EditorType } from '../editor/editors';
-// import i18n from "../i18n/i18n";
+import i18n from "../i18n/i18n";
+
+const {t} = i18n;
 
 /** 单元格编辑组件配置 */
 interface ITableCellEditorProps<R extends Entity> extends React.HTMLAttributes<HTMLElement> {
@@ -29,7 +31,6 @@ function TableCellEditor<E extends Entity>(props: React.PropsWithChildren<ITable
           rules={[
             {
               required: true,
-              message: `请输入 !`,
             },
           ]}
         >
@@ -105,9 +106,9 @@ function EditableTable<E extends Entity>(props: IEditableTableProps<E>) {
     let idx = data.findIndex(r => getEntityFieldValueInString(r, keyField) === getEntityFieldValueInString(record, keyField));
     if(idx >= 0 && onDeleteRow){
       Modal.confirm({
-        title: "请确认",
+        title: t("table.EditableTable.confirmTitle"),
         icon: <ExclamationCircleOutlined />,
-        content: "删除当前选择项目吗?",
+        content: t("table.EditableTable.confirmDelete"),
         onOk(){
           if(onDeleteRow)
             onDeleteRow(record, getEntityFieldValueInString(record, keyField) || "", idx);
@@ -136,7 +137,7 @@ function EditableTable<E extends Entity>(props: IEditableTableProps<E>) {
     });
     
     cols.splice(0, 0, {
-      title: "操作",
+      title: t("table.EditableTable.operation"),
       dataIndex: "__operation",
       render: (_:any, record: E) => {
         return isRowEditable(record) ? 

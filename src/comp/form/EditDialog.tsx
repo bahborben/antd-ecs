@@ -2,8 +2,10 @@ import React, { ReactNode, useEffect } from 'react';
 import { Form, Modal } from 'antd';
 import { Entity } from '../model';
 import BaseForm, { IBaseFormProps, getLayout } from './BaseForm';
-// import i18n from "../i18n/i18n";
+import i18n from "../i18n/i18n";
 import { get, omit } from 'lodash'
+
+const {t} = i18n;
 
 export interface IEditDialogProp<E extends Entity> extends Omit<IBaseFormProps<E>, "onSubmit"|"onCancel"> {
   visible: boolean,
@@ -53,8 +55,8 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
       style={props.style}
       open={visible}
       title={title}
-      okText={okTitle ? okTitle : "确认"}
-      cancelText={cancelTitle ? cancelTitle : "取消"}
+      okText={okTitle ? okTitle : t("form.EditDialog.ok")}
+      cancelText={cancelTitle ? cancelTitle : t("form.EditDialog.cancel")}
       onOk={handleOk}
       onCancel={handleCancel}
       width={width ?? "70vw"}

@@ -3,9 +3,10 @@ import { Input } from 'antd';
 import { Entity, getEntityFieldValueInString } from '../model';
 import { IRefQueryCondition, RefId } from './interface';
 import SearchTable, { ISearchTableProps } from '../table/SearchTable';
-// import i18n from '../i18n/i18n';
+import i18n from '../i18n/i18n';
 import { useDebounce } from '../util';
 
+const {t} = i18n;
 
 const {Search} = Input;
 
@@ -103,7 +104,7 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
   return (
     <React.Fragment>
       <Search
-        placeholder={"查询关键字"}
+        placeholder={t("selector.ModalTableSelector.keyword")}
         onSearch={(v, e) => {
           if(!(e?.nativeEvent.type==="click" && ("value" in e?.target ?? {}))){
             // do search only for keyDown or search button clicked
@@ -128,8 +129,8 @@ function ModalTableSelector<E extends Entity, ID extends RefId>(props: IModalTab
         onCancel={() => {setShowTable(false)}}
         open={showTable}
         onSelect={handleSelect}
-        okText={"确认"}
-        cancelText={"取消"}
+        okText={props.okText ?? t("selector.ModalTableSelector.ok")}
+        cancelText={props.cancelText ?? t("selector.ModalTableSelector.cancel")}
       />
     </React.Fragment>
   );
