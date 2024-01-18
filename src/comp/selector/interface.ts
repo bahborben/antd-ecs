@@ -11,7 +11,7 @@ export interface IRefQueryCondition<ID extends RefId> {
   [key: string]: any
 }
 
-export type SelectorLabelRender<E extends Entity> = string | ((entity: E)=>(string | undefined));
+export type SelectorLabelRender<E extends Entity> = string | ((entity: E)=>(ReactNode | undefined));
 
 // 动态内容参照的数据加载接口
 export declare type RefDataProvider<E extends Entity, ID extends RefId> = (queryCondition: IRefQueryCondition<ID>) => Promise<E[]>;
