@@ -3,7 +3,7 @@ import { Button, Card, Col, Collapse, Pagination, Row, Space, Tabs } from 'antd'
 import { SearchOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, PageInfo } from '../model';
-import BaseForm, { IBaseFormItemProps, IBaseFormProps } from '../form/BaseForm';
+import BaseForm, { IBaseFormSectionProps, IBaseFormItemProps, IBaseFormProps, pickFormItems } from '../form/BaseForm';
 import i18n from '../i18n/i18n';
 import { ITableColumnConfig, TableColumnConfigReader, TableColumnConfigWritter, applyTableColumnConfig, localStorageConfigReader } from './BaseTable';
 import { ColumnType } from 'antd/lib/table/interface';
@@ -116,9 +116,10 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
     </Row>
   }
 
-  const getCommonFilterItems = (): IBaseFormItemProps[] => {
+  const getCommonFilterItems = (): IBaseFormItemProps[] | IBaseFormSectionProps[] => {
     if(props.filters?.items && props.commonFilterKeys){
-      return props.filters.items.filter(i => props.commonFilterKeys?.includes(i.key))
+      return pickFormItems(props.filters.items, props.commonFilterKeys || []);
+      // return props.filters.items.filter(i => props.commonFilterKeys?.includes(i.key))
     }
     return [];
   }
@@ -134,7 +135,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
               allowReset={true}
               submitTitle={t("table.ControlPanel.search")}
 		          extraOperations={[
-                (<Button onClick={e => setCommonFilterMode(false)}>${t("table.ControlPanel.more")}</Button>)
+                (<Button onClick={e => setCommonFilterMode(false)}>{t("table.ControlPanel.more")}</Button>)
               ]}
               {...props.filters}
               items={ci}

@@ -1,7 +1,7 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Form, Modal } from 'antd';
 import { Entity } from '../model';
-import BaseForm, { IBaseFormProps, getLayout } from './BaseForm';
+import BaseForm, { IBaseFormProps } from './BaseForm';
 import i18n from "../i18n/i18n";
 import { get, omit } from 'lodash'
 
@@ -47,9 +47,9 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
   }
   
   let {
-    visible, title, okTitle, cancelTitle, items, cols, validateMessages, width
+    visible, title, okTitle, cancelTitle, validateMessages, width
   } = props
-  let rows: ReactNode[] = getLayout(items, cols);
+  // let rows: ReactNode[] = getLayout(items, cols);
   return(
     <Modal
       style={props.style}
@@ -70,9 +70,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
         scrollToFirstError={true}
         {...(omit(props, ["onCancel", "style"]))}
         form={formRef}
-      >
-        {rows}
-      </BaseForm>
+      />
     </Modal>
   );
 }

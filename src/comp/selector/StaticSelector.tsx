@@ -5,7 +5,7 @@ import { RefId, SelectorLabelRender } from './interface';
 import { BaseOptionType } from 'antd/es/select';
 import { get } from 'lodash';
 
-export interface IStaticSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, BaseOptionType>, "onChange"|"options"|"optionLabelProp"> {
+export interface IStaticSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, BaseOptionType>, "onChange"|"options"|"optionLabelProp"|"labelRender"> {
   /* 选项数据 */
   readonly data: E[],  
   /* 值对应的属性名称 */
@@ -39,6 +39,7 @@ function StaticSelector<E extends Entity, ID extends RefId>(props: IStaticSelect
   return (
     <Select
       {...props}
+      labelRender = {undefined} //overwrite props field: labelRender
       value={props.value || selectedValue}
       onChange={handleChange}
       options={getOptions()}
