@@ -7,7 +7,7 @@ import { get } from 'lodash';
 
 export interface IDynamicSelectorProps<E extends Entity, ID extends RefId> extends Omit<SelectProps<ID, BaseOptionType>, 
   "onChange" | "children" | "options" | "optionLabelProp" | "optionFilterProp" | "mode" | "fieldNames" 
-  | "onClear" | "showSearch" | "loading"> {
+  | "onClear" | "showSearch" | "loading" | "labelRender"> {
   onLoadData: RefDataProvider<E, ID>,
   idField: string,
   labelRender: SelectorLabelRender<E>,
@@ -57,6 +57,7 @@ function DynamicSelector<E extends Entity, ID extends RefId>(props: IDynamicSele
   return (
     <Select
       {...props}
+      labelRender={undefined} // overwrite labelRender option
       showSearch
       onClear={() => setSelectedValue(undefined)}
       loading={loading}

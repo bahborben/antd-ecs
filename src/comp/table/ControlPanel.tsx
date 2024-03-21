@@ -134,7 +134,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
               allowReset={true}
               submitTitle={t("table.ControlPanel.search")}
 		          extraOperations={[
-                (<Button onClick={e => setCommonFilterMode(false)}>${t("table.ControlPanel.more")}</Button>)
+                (<Button onClick={e => setCommonFilterMode(false)}>{t("table.ControlPanel.more")}</Button>)
               ]}
               {...props.filters}
               items={ci}
