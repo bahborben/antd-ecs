@@ -37,7 +37,7 @@ function EditDialog<E extends Entity>(props: IEditDialogProp<E>) {
       if(props.onOk !== undefined)
         props.onOk(values as E);
     }).catch(info => {
-      console.log('Validate Failed:', info);
+      console.error('Validate Failed:', info);
     });
   }
 

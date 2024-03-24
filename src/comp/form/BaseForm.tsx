@@ -20,12 +20,15 @@ export interface IBaseFormItemProps extends FormItemProps {
   label: string,
   span: 1 | 2 | 3 | 4,
   editor?: EditorType<any>,
-  subItems?: IBaseFormItemProps[],
-  sectionStart?: Omit<DividerProps, 'type'> & { title?: string };  // all horizontal,
+  subItems?: IBaseFormItemProps[]
 }
 
-function isSection(data: unknown): data is IBaseFormSectionProps[]{
-  return data !== undefined;
+function isSection(data: any[]): data is IBaseFormSectionProps[]{
+  return undefined !== data && data.every(item =>  'items' in item);
+}
+
+function isItem(data: any[]): data is IBaseFormItemProps[]{
+  return undefined !== data && data.every(item =>  'label' in item && 'span' in item);
 }
 
 /*  */
@@ -40,10 +43,12 @@ function filterFormItems<T extends IBaseFormItemProps[] | IBaseFormSectionProps[
       g.items = g.items?.filter(c => valid(idx, c.key)) || [];
     });
     return grp.filter(g => g.items.length > 0) as T; // only return sections which are not empty
-  } else {
+  } else if(isItem(items)) {
     // is item
     return items.filter(c => valid(idx, c.key)) as T;
-  }  
+  } else{
+    return items;
+  }
 }
 /* omit part of given items or items in sections */
 export function omitFormItems(items: IBaseFormItemProps[] | IBaseFormSectionProps[], keys: string[]): (IBaseFormItemProps[] | IBaseFormSectionProps[]) {
@@ -110,8 +115,10 @@ export const getSectionLayout = (sections: IBaseFormSectionProps[], colCount: nu
     }
     // render items
     rows.push(
-      <Row key={`g_${i}`}>
-        {getItemLayout(items, colCount)}
+      <Row key={`g_${i}`}  gutter={24}>
+        <Col span={24}>
+          {getItemLayout(items, colCount)}
+        </Col>
       </Row>
     );
   }

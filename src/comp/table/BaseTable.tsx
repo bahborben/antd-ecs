@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
-import { Checkbox, Radio, Table, TableProps } from 'antd';
+import { Table, TableProps } from 'antd';
 import { ColumnType, TableRowSelection } from 'antd/lib/table/interface';
 
 import { Entity, getEntityFieldValueInString } from '../model';
