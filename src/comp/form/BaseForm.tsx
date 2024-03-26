@@ -37,10 +37,12 @@ function filterFormItems<T extends IBaseFormItemProps[] | IBaseFormSectionProps[
     return [] as unknown as T;
   let idx: string[] = uniq(compact(keys));
   if(isSection(items)){
-    // is section
-    let grp: IBaseFormSectionProps[] = items as IBaseFormSectionProps[];
-    grp.forEach(g => {
-      g.items = g.items?.filter(c => valid(idx, c.key)) || [];
+    let grp: IBaseFormSectionProps[] = items.map(i => {
+      // clone new object
+      return {
+        ...i,
+        items: i.items.filter(c => valid(idx, c.key)) || []
+      };
     });
     return grp.filter(g => g.items.length > 0) as T; // only return sections which are not empty
   } else if(isItem(items)) {
