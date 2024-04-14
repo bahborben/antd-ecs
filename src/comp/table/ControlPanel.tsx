@@ -155,7 +155,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
               preserve={true}
               allowReset={true}
               submitTitle={t("table.ControlPanel.search")}
-		          extraOperations={getCommonFilterItems().length > 0 ? [<Button onClick={e => setCommonFilterMode(true)}>${t("table.ControlPanel.back")}</Button>] : []}                
+		          extraOperations={getCommonFilterItems().length > 0 ? [<Button onClick={e => setCommonFilterMode(true)}>{t("table.ControlPanel.back")}</Button>] : []}                
               {...props.filters}
             />
           </Card>
