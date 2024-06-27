@@ -44,6 +44,7 @@ export interface IBaseTableProps<E extends Entity> extends Omit<TableProps<E>, '
     multiSelect?: boolean,
     onRowSelected?: (records: E[], keys: React.Key[]) => void,
     clearSelectionAfterDataChange?: boolean,
+    syncSelectionEvent?: boolean,
     selectOptions?: TableRowSelection<E>,
     config?: {
         id: string,
@@ -126,7 +127,14 @@ function BaseTable<E extends Entity>(props: IBaseTableProps<E>) {
       return dk && selectedKeys.includes(dk);
     });
     if(props.onRowSelected){
-      props.onRowSelected(rows, selectedKeys);
+      if(props.syncSelectionEvent){
+        (async () => {
+          if(undefined !== props.onRowSelected)
+            props.onRowSelected(rows, selectedKeys);
+        })();
+      } else {
+        props.onRowSelected(rows, selectedKeys);
+      }
     }
   }, [selectedKeys]);
   

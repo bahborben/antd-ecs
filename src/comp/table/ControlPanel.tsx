@@ -1,5 +1,5 @@
 import React, { ReactElement,  ReactNode,  useEffect,  useState } from 'react';
-import { Button, Card, Col, Collapse, Pagination, Row, Space, Tabs } from 'antd';
+import { Button, Card, Col, Pagination, Row, Space, Tabs, TabsProps } from 'antd';
 import { SearchOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, PageInfo } from '../model';
@@ -9,7 +9,6 @@ import { ITableColumnConfig, TableColumnConfigReader, TableColumnConfigWritter, 
 import { ColumnType } from 'antd/lib/table/interface';
 import TableConfDialog from './TableConfDialog';
 
-const {TabPane} = Tabs;
 const {t} = i18n;
 
 export interface IPagination extends Omit<PaginationProps, "total"|"current"|"pageSize"|"onShowSizeChange"|"onChange"> {
@@ -79,7 +78,7 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
   }
 
   const getHeader = (): ReactNode => {
-    return <Row align="middle" justify="center" gutter={10}>
+    return <Row align="middle" justify="center" gutter={10} style={{paddingLeft: "10px", paddingRight: "10px"}}>
       {
         props.filters ? (
           <Col flex="0 0 auto">
@@ -164,15 +163,10 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
     }
   }
 
-  const createFilterForm = () => {
-    return (
-      <Tabs activeKey={showFilterForm ? (commonFilterMode ? "common" : "detail") : "none"} renderTabBar={(props, bar) => <></>} >
-        <TabPane key="common" tab="common">{getCommonFilterForm()}</TabPane>
-        <TabPane key="detail" tab="detail">{getDetailFilterForm()}</TabPane>
-        <TabPane key="none" tab="none"></TabPane>
-      </Tabs>
-    );
-  }
+  const tabList: TabsProps["items"] = [
+    {key: "common", label: "", children: getCommonFilterForm()},
+    {key: "detail", label: "", children: getDetailFilterForm()},
+  ];
 
   const handleConfigChange = (config: ITableColumnConfig[]) => {
     setColumnConfig(config);
@@ -188,13 +182,21 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
 
   return (
     <React.Fragment>
-        <Card>
-            <Collapse activeKey="ctrl" >
-                <Collapse.Panel header={getHeader()} key="ctrl" collapsible='disabled' showArrow={false} >
-                {createFilterForm()}
-                </Collapse.Panel>
-            </Collapse>
-        </Card>
+        <Col flex="1 1 auto">
+          {getHeader()}
+          {
+            (showFilterForm && props.filters) ? (
+              <Row>
+                <Tabs
+                  style={{width: "100%"}}
+                  activeKey={commonFilterMode ? "common" : "detail"}
+                  renderTabBar={(props, bar) => <></>}
+                  items={tabList}
+                />
+              </Row>
+            ) : undefined
+          }
+        </Col>
         <TableConfDialog
             columnConfig={columnConfig}
             onConfigChange={handleConfigChange}
