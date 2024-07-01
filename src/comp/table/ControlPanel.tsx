@@ -1,5 +1,5 @@
 import React, { ReactElement,  ReactNode,  useEffect,  useState } from 'react';
-import { Button, Card, Col, Pagination, Row, Space, Tabs, TabsProps } from 'antd';
+import { Button, Card, Col, Divider, Pagination, Row, Space, Tabs, TabsProps } from 'antd';
 import { SearchOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { PaginationProps } from 'antd/lib/pagination';
 import { Data, Entity, PageInfo } from '../model';
@@ -78,15 +78,17 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
   }
 
   const getHeader = (): ReactNode => {
-    return <Row align="middle" justify="center" gutter={10} style={{paddingLeft: "10px", paddingRight: "10px"}}>
+    return <Row align="middle">
       {
         props.filters ? (
           <Col flex="0 0 auto">
             <Space>
+              <Divider type="vertical"/>
               <Button type="primary" shape="circle" icon={<SearchOutlined />} onClick={e => {
                 setShowFilterForm(!showFilterForm);
                 setCommonFilterMode(getCommonFilterItems().length === 0 ? false : true);
               }} />
+              <Divider type="vertical"/>
             </Space>
           </Col>
         ) : undefined
@@ -97,7 +99,10 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
       {
         props.page ? (
           <Col flex="0 0 auto">
-            {getPagination()}
+            <Space>
+              <Divider type="vertical"/>
+              {getPagination()}
+            </Space>
           </Col>
         ) : undefined
       }
@@ -105,9 +110,11 @@ function ControlPanel<QC extends Data, COL extends Entity>(props: IControlPanelP
         props.config?.id ? (
           <Col flex="0 0 auto">
             <Space>
+              <Divider type="vertical"/>
               <Button type="primary" shape="circle" icon={hasPersistConfig ? <FormOutlined /> : <EditOutlined />} onClick={e => {
                 setShowConfDialog(true);
               }} />
+              <Divider type="vertical"/>
             </Space>
           </Col>
         ) : undefined
