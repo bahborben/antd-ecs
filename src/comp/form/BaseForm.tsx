@@ -127,21 +127,31 @@ export const getSectionLayout = (sections: IBaseFormSectionProps[], colCount: nu
   return rows;
 }
 
-export const getItemLayout = (items: IBaseFormItemProps[], colCount: number): ReactNode[] => {
+export const getItemLayout = (allItems: IBaseFormItemProps[], colCount: number): ReactNode[] => {
+  let
+    visibleItems: IBaseFormItemProps[] = [],
+    hiddenItems: IBaseFormItemProps[] = [];
+  allItems.forEach(x => {
+    if(x.hidden)
+      hiddenItems.push(x);
+    else
+      visibleItems.push(x);
+  });
+
   let rows: ReactNode[] = [];
   let
     start: number = 0,
     end: number = 0,
     span: number = 0;
 
-  for (let i = 0; i < items.length; i++) {
+  for (let i = 0; i < visibleItems.length; i++) {
     end = i;
     // let currCount = items[i].span > colCount ? colCount : items[i].span;
-    let currCount = Math.min(colCount, items[i].span);
+    let currCount = Math.min(colCount, visibleItems[i].span);
     span += currCount;
     if (span > colCount) {
       // 如超出宽度, 或是区域起始点，则将已计数的item归入Row记录
-      let rowElements = items.slice(start, end);
+      let rowElements = visibleItems.slice(start, end);
       if (rowElements.length > 0) {
         rows.push(
           <Row key={i} gutter={24}>
@@ -160,7 +170,7 @@ export const getItemLayout = (items: IBaseFormItemProps[], colCount: number): Re
   }
   if (end >= start) {
     // 最后剩余不足一行的
-    let rowElements = items.slice(start);
+    let rowElements = visibleItems.slice(start);
     rows.push(
       <Row key={"end"} gutter={24}>
         {rowElements.map(e => (
@@ -168,6 +178,13 @@ export const getItemLayout = (items: IBaseFormItemProps[], colCount: number): Re
             {getItem(e)}
           </Col>
         ))}
+      </Row>
+    );
+  }
+  if(hiddenItems.length > 0){
+    rows.push(
+      <Row key={"hid"} gutter={24}>
+        {hiddenItems.map(e => getItem(e))}
       </Row>
     );
   }
